@@ -1,0 +1,515 @@
+import { useState, useContext } from 'react';
+import { PropertyContext } from '../context/PropertyContext';
+import AdminSidebar from '../components/AdminSidebar';
+import api from '../utils/api';
+
+const AddProperty = ({ setCurrentPage }) => {
+  const { fetchProperties } = useContext(PropertyContext);
+  const [formData, setFormData] = useState({
+    title: '',
+    description: '',
+    price: '',
+    city: '',
+    bhk: '',
+    area: '',
+    bathrooms: '',
+    image: '',
+    amenities: ''
+  });
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    
+    const amenitiesArray = formData.amenities
+      .split(',')
+      .map(a => a.trim())
+      .filter(a => a);
+    
+    try {
+      const response = await api.post('/properties', { 
+        ...formData, 
+        amenities: amenitiesArray 
+      });
+      
+      if (response.data.success) {
+        setSuccess(true);
+        fetchProperties();
+        setTimeout(() => {
+          setCurrentPage('admin-dashboard');
+        }, 2000);
+      }
+    } catch (error) {
+      console.error('Error adding property:', error);
+    }
+    
+    setLoading(false);
+  };
+
+  return (
+    <div style={{ display: 'flex' }}>
+      <AdminSidebar currentPage="add-property" setCurrentPage={setCurrentPage} />
+      <div style={{
+        flex: 1,
+        background: '#f3f4f6',
+        padding: '2rem'
+      }}>
+        <div style={{ maxWidth: '1000px' }}>
+          <h1 style={{
+            fontSize: '2rem',
+            fontWeight: 800,
+            color: '#111827',
+            marginBottom: '2rem'
+          }}>Add New Property</h1>
+
+          {success && (
+            <div style={{
+              background: '#d1fae5',
+              border: '2px solid #10b981',
+              color: '#065f46',
+              padding: '1rem 1.5rem',
+              borderRadius: '0.75rem',
+              marginBottom: '1.5rem'
+            }}>
+              <p style={{ fontWeight: 'bold', marginBottom: '0.25rem' }}>Success!</p>
+              <p style={{ fontSize: '0.875rem' }}>Property added successfully. Redirecting...</p>
+            </div>
+          )}
+
+          <div style={{
+            background: 'white',
+            borderRadius: '1.5rem',
+            padding: '3rem',
+            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)'
+          }}>
+            <form onSubmit={handleSubmit} style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '1.5rem'
+            }}>
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(2, 1fr)',
+                gap: '1.5rem'
+              }}>
+                <div>
+                  <label style={{
+                    display: 'block',
+                    fontSize: '0.95rem',
+                    fontWeight: 600,
+                    color: '#374151',
+                    marginBottom: '0.5rem'
+                  }}>
+                    Property Title *
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.title}
+                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                    required
+                    placeholder="Luxury Villa in Bandra"
+                    style={{
+                      width: '100%',
+                      padding: '0.875rem 1rem',
+                      border: '2px solid #e5e7eb',
+                      borderRadius: '0.75rem',
+                      fontSize: '1rem',
+                      transition: 'all 0.3s ease',
+                      background: '#f9fafb'
+                    }}
+                    onFocus={(e) => {
+                      e.target.style.borderColor = '#2563eb';
+                      e.target.style.background = 'white';
+                      e.target.style.boxShadow = '0 0 0 3px rgba(37, 99, 235, 0.1)';
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.borderColor = '#e5e7eb';
+                      e.target.style.background = '#f9fafb';
+                      e.target.style.boxShadow = 'none';
+                    }}
+                  />
+                </div>
+                <div>
+                  <label style={{
+                    display: 'block',
+                    fontSize: '0.95rem',
+                    fontWeight: 600,
+                    color: '#374151',
+                    marginBottom: '0.5rem'
+                  }}>
+                    City *
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.city}
+                    onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                    required
+                    placeholder="Mumbai"
+                    style={{
+                      width: '100%',
+                      padding: '0.875rem 1rem',
+                      border: '2px solid #e5e7eb',
+                      borderRadius: '0.75rem',
+                      fontSize: '1rem',
+                      transition: 'all 0.3s ease',
+                      background: '#f9fafb'
+                    }}
+                    onFocus={(e) => {
+                      e.target.style.borderColor = '#2563eb';
+                      e.target.style.background = 'white';
+                      e.target.style.boxShadow = '0 0 0 3px rgba(37, 99, 235, 0.1)';
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.borderColor = '#e5e7eb';
+                      e.target.style.background = '#f9fafb';
+                      e.target.style.boxShadow = 'none';
+                    }}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label style={{
+                  display: 'block',
+                  fontSize: '0.95rem',
+                  fontWeight: 600,
+                  color: '#374151',
+                  marginBottom: '0.5rem'
+                }}>
+                  Description
+                </label>
+                <textarea
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  rows="4"
+                  placeholder="Describe the property..."
+                  style={{
+                    width: '100%',
+                    padding: '0.875rem 1rem',
+                    border: '2px solid #e5e7eb',
+                    borderRadius: '0.75rem',
+                    fontSize: '1rem',
+                    transition: 'all 0.3s ease',
+                    background: '#f9fafb',
+                    resize: 'vertical',
+                    fontFamily: 'inherit'
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = '#2563eb';
+                    e.target.style.background = 'white';
+                    e.target.style.boxShadow = '0 0 0 3px rgba(37, 99, 235, 0.1)';
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = '#e5e7eb';
+                    e.target.style.background = '#f9fafb';
+                    e.target.style.boxShadow = 'none';
+                  }}
+                ></textarea>
+              </div>
+
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(3, 1fr)',
+                gap: '1.5rem'
+              }}>
+                <div>
+                  <label style={{
+                    display: 'block',
+                    fontSize: '0.95rem',
+                    fontWeight: 600,
+                    color: '#374151',
+                    marginBottom: '0.5rem'
+                  }}>
+                    Price (₹) *
+                  </label>
+                  <input
+                    type="number"
+                    value={formData.price}
+                    onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                    required
+                    placeholder="5000000"
+                    style={{
+                      width: '100%',
+                      padding: '0.875rem 1rem',
+                      border: '2px solid #e5e7eb',
+                      borderRadius: '0.75rem',
+                      fontSize: '1rem',
+                      transition: 'all 0.3s ease',
+                      background: '#f9fafb'
+                    }}
+                    onFocus={(e) => {
+                      e.target.style.borderColor = '#2563eb';
+                      e.target.style.background = 'white';
+                      e.target.style.boxShadow = '0 0 0 3px rgba(37, 99, 235, 0.1)';
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.borderColor = '#e5e7eb';
+                      e.target.style.background = '#f9fafb';
+                      e.target.style.boxShadow = 'none';
+                    }}
+                  />
+                </div>
+                <div>
+                  <label style={{
+                    display: 'block',
+                    fontSize: '0.95rem',
+                    fontWeight: 600,
+                    color: '#374151',
+                    marginBottom: '0.5rem'
+                  }}>
+                    BHK *
+                  </label>
+                  <select
+                    value={formData.bhk}
+                    onChange={(e) => setFormData({ ...formData, bhk: e.target.value })}
+                    required
+                    style={{
+                      width: '100%',
+                      padding: '0.875rem 1rem',
+                      border: '2px solid #e5e7eb',
+                      borderRadius: '0.75rem',
+                      fontSize: '1rem',
+                      transition: 'all 0.3s ease',
+                      background: '#f9fafb',
+                      cursor: 'pointer'
+                    }}
+                    onFocus={(e) => {
+                      e.target.style.borderColor = '#2563eb';
+                      e.target.style.background = 'white';
+                      e.target.style.boxShadow = '0 0 0 3px rgba(37, 99, 235, 0.1)';
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.borderColor = '#e5e7eb';
+                      e.target.style.background = '#f9fafb';
+                      e.target.style.boxShadow = 'none';
+                    }}
+                  >
+                    <option value="">Select</option>
+                    <option value="1">1 BHK</option>
+                    <option value="2">2 BHK</option>
+                    <option value="3">3 BHK</option>
+                    <option value="4">4 BHK</option>
+                    <option value="5">5+ BHK</option>
+                  </select>
+                </div>
+                <div>
+                  <label style={{
+                    display: 'block',
+                    fontSize: '0.95rem',
+                    fontWeight: 600,
+                    color: '#374151',
+                    marginBottom: '0.5rem'
+                  }}>
+                    Bathrooms *
+                  </label>
+                  <input
+                    type="number"
+                    value={formData.bathrooms}
+                    onChange={(e) => setFormData({ ...formData, bathrooms: e.target.value })}
+                    required
+                    placeholder="2"
+                    style={{
+                      width: '100%',
+                      padding: '0.875rem 1rem',
+                      border: '2px solid #e5e7eb',
+                      borderRadius: '0.75rem',
+                      fontSize: '1rem',
+                      transition: 'all 0.3s ease',
+                      background: '#f9fafb'
+                    }}
+                    onFocus={(e) => {
+                      e.target.style.borderColor = '#2563eb';
+                      e.target.style.background = 'white';
+                      e.target.style.boxShadow = '0 0 0 3px rgba(37, 99, 235, 0.1)';
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.borderColor = '#e5e7eb';
+                      e.target.style.background = '#f9fafb';
+                      e.target.style.boxShadow = 'none';
+                    }}
+                  />
+                </div>
+              </div>
+
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(2, 1fr)',
+                gap: '1.5rem'
+              }}>
+                <div>
+                  <label style={{
+                    display: 'block',
+                    fontSize: '0.95rem',
+                    fontWeight: 600,
+                    color: '#374151',
+                    marginBottom: '0.5rem'
+                  }}>
+                    Area (sq ft)
+                  </label>
+                  <input
+                    type="number"
+                    value={formData.area}
+                    onChange={(e) => setFormData({ ...formData, area: e.target.value })}
+                    placeholder="1200"
+                    style={{
+                      width: '100%',
+                      padding: '0.875rem 1rem',
+                      border: '2px solid #e5e7eb',
+                      borderRadius: '0.75rem',
+                      fontSize: '1rem',
+                      transition: 'all 0.3s ease',
+                      background: '#f9fafb'
+                    }}
+                    onFocus={(e) => {
+                      e.target.style.borderColor = '#2563eb';
+                      e.target.style.background = 'white';
+                      e.target.style.boxShadow = '0 0 0 3px rgba(37, 99, 235, 0.1)';
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.borderColor = '#e5e7eb';
+                      e.target.style.background = '#f9fafb';
+                      e.target.style.boxShadow = 'none';
+                    }}
+                  />
+                </div>
+                <div>
+                  <label style={{
+                    display: 'block',
+                    fontSize: '0.95rem',
+                    fontWeight: 600,
+                    color: '#374151',
+                    marginBottom: '0.5rem'
+                  }}>
+                    Image URL
+                  </label>
+                  <input
+                    type="url"
+                    value={formData.image}
+                    onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+                    placeholder="https://..."
+                    style={{
+                      width: '100%',
+                      padding: '0.875rem 1rem',
+                      border: '2px solid #e5e7eb',
+                      borderRadius: '0.75rem',
+                      fontSize: '1rem',
+                      transition: 'all 0.3s ease',
+                      background: '#f9fafb'
+                    }}
+                    onFocus={(e) => {
+                      e.target.style.borderColor = '#2563eb';
+                      e.target.style.background = 'white';
+                      e.target.style.boxShadow = '0 0 0 3px rgba(37, 99, 235, 0.1)';
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.borderColor = '#e5e7eb';
+                      e.target.style.background = '#f9fafb';
+                      e.target.style.boxShadow = 'none';
+                    }}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label style={{
+                  display: 'block',
+                  fontSize: '0.95rem',
+                  fontWeight: 600,
+                  color: '#374151',
+                  marginBottom: '0.5rem'
+                }}>
+                  Amenities (comma-separated)
+                </label>
+                <input
+                  type="text"
+                  value={formData.amenities}
+                  onChange={(e) => setFormData({ ...formData, amenities: e.target.value })}
+                  placeholder="Swimming Pool, Gym, Parking, Security"
+                  style={{
+                    width: '100%',
+                    padding: '0.875rem 1rem',
+                    border: '2px solid #e5e7eb',
+                    borderRadius: '0.75rem',
+                    fontSize: '1rem',
+                    transition: 'all 0.3s ease',
+                    background: '#f9fafb'
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = '#2563eb';
+                    e.target.style.background = 'white';
+                    e.target.style.boxShadow = '0 0 0 3px rgba(37, 99, 235, 0.1)';
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = '#e5e7eb';
+                    e.target.style.background = '#f9fafb';
+                    e.target.style.boxShadow = 'none';
+                  }}
+                />
+              </div>
+
+              <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  style={{
+                    flex: 1,
+                    background: 'linear-gradient(135deg, #2563eb 0%, #1e40af 100%)',
+                    color: 'white',
+                    padding: '1rem',
+                    borderRadius: '0.75rem',
+                    fontWeight: 700,
+                    fontSize: '1rem',
+                    border: 'none',
+                    cursor: loading ? 'not-allowed' : 'pointer',
+                    transition: 'all 0.3s ease',
+                    opacity: loading ? 0.7 : 1,
+                    boxShadow: '0 4px 15px rgba(37, 99, 235, 0.3)'
+                  }}
+                  onMouseOver={(e) => {
+                    if (!loading) {
+                      e.target.style.transform = 'translateY(-2px)';
+                      e.target.style.boxShadow = '0 8px 25px rgba(37, 99, 235, 0.4)';
+                    }
+                  }}
+                  onMouseOut={(e) => {
+                    e.target.style.transform = 'translateY(0)';
+                    e.target.style.boxShadow = '0 4px 15px rgba(37, 99, 235, 0.3)';
+                  }}
+                >
+                  {loading ? 'Adding Property...' : 'Add Property'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setCurrentPage('admin-dashboard')}
+                  style={{
+                    padding: '1rem 2rem',
+                    background: '#f3f4f6',
+                    color: '#374151',
+                    borderRadius: '0.75rem',
+                    fontWeight: 700,
+                    fontSize: '1rem',
+                    border: '2px solid #e5e7eb',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease'
+                  }}
+                  onMouseOver={(e) => {
+                    e.target.style.background = '#e5e7eb';
+                  }}
+                  onMouseOut={(e) => {
+                    e.target.style.background = '#f3f4f6';
+                  }}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default AddProperty;
