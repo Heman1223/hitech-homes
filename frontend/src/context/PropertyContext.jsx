@@ -26,9 +26,9 @@ export const PropertyProvider = ({ children }) => {
     try {
       const response = await api.get(`/properties${query}`);
 
-      if (response?.data?.success && Array.isArray(response.data.properties)) {
-        setProperties(response.data.properties);
-        setFilteredProperties(response.data.properties);
+      if (response?.data?.success && Array.isArray(response.data.data)) {
+        setProperties(response.data.data);
+        setFilteredProperties(response.data.data);
       } else {
         console.warn("Unexpected response:", response.data);
         setProperties([]);

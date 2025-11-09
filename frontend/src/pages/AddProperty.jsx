@@ -10,6 +10,7 @@ const AddProperty = ({ setCurrentPage }) => {
     description: '',
     price: '',
     city: '',
+    address: '',
     bhk: '',
     area: '',
     bathrooms: '',
@@ -18,20 +19,27 @@ const AddProperty = ({ setCurrentPage }) => {
   });
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [error, setError] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setError('');
+    setSuccess(false);
     
     const amenitiesArray = formData.amenities
       .split(',')
       .map(a => a.trim())
       .filter(a => a);
     
+    const imagesArray = formData.image ? [formData.image] : [];
+    
     try {
       const response = await api.post('/properties', { 
         ...formData, 
-        amenities: amenitiesArray 
+        address: formData.address,
+        amenities: amenitiesArray,
+        images: imagesArray
       });
       
       if (response.data.success) {
@@ -43,6 +51,7 @@ const AddProperty = ({ setCurrentPage }) => {
       }
     } catch (error) {
       console.error('Error adding property:', error);
+      setError(error.response?.data?.message || 'Failed to add property. Please try again.');
     }
     
     setLoading(false);
@@ -75,6 +84,20 @@ const AddProperty = ({ setCurrentPage }) => {
             }}>
               <p style={{ fontWeight: 'bold', marginBottom: '0.25rem' }}>Success!</p>
               <p style={{ fontSize: '0.875rem' }}>Property added successfully. Redirecting...</p>
+            </div>
+          )}
+
+          {error && (
+            <div style={{
+              background: '#fee2e2',
+              border: '2px solid #ef4444',
+              color: '#991b1b',
+              padding: '1rem 1.5rem',
+              borderRadius: '0.75rem',
+              marginBottom: '1.5rem'
+            }}>
+              <p style={{ fontWeight: 'bold', marginBottom: '0.25rem' }}>Error!</p>
+              <p style={{ fontSize: '0.875rem' }}>{error}</p>
             </div>
           )}
 
@@ -168,52 +191,6 @@ const AddProperty = ({ setCurrentPage }) => {
                     }}
                   />
                 </div>
-              </div>
-
-              <div>
-                <label style={{
-                  display: 'block',
-                  fontSize: '0.95rem',
-                  fontWeight: 600,
-                  color: '#374151',
-                  marginBottom: '0.5rem'
-                }}>
-                  Description
-                </label>
-                <textarea
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  rows="4"
-                  placeholder="Describe the property..."
-                  style={{
-                    width: '100%',
-                    padding: '0.875rem 1rem',
-                    border: '2px solid #e5e7eb',
-                    borderRadius: '0.75rem',
-                    fontSize: '1rem',
-                    transition: 'all 0.3s ease',
-                    background: '#f9fafb',
-                    resize: 'vertical',
-                    fontFamily: 'inherit'
-                  }}
-                  onFocus={(e) => {
-                    e.target.style.borderColor = '#2563eb';
-                    e.target.style.background = 'white';
-                    e.target.style.boxShadow = '0 0 0 3px rgba(37, 99, 235, 0.1)';
-                  }}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = '#e5e7eb';
-                    e.target.style.background = '#f9fafb';
-                    e.target.style.boxShadow = 'none';
-                  }}
-                ></textarea>
-              </div>
-
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(3, 1fr)',
-                gap: '1.5rem'
-              }}>
                 <div>
                   <label style={{
                     display: 'block',
@@ -222,14 +199,14 @@ const AddProperty = ({ setCurrentPage }) => {
                     color: '#374151',
                     marginBottom: '0.5rem'
                   }}>
-                    Price (₹) *
+                    Address *
                   </label>
                   <input
-                    type="number"
-                    value={formData.price}
-                    onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                    type="text"
+                    value={formData.address}
+                    onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                     required
-                    placeholder="5000000"
+                    placeholder="123 Main St, Bandra West"
                     style={{
                       width: '100%',
                       padding: '0.875rem 1rem',
@@ -259,57 +236,16 @@ const AddProperty = ({ setCurrentPage }) => {
                     color: '#374151',
                     marginBottom: '0.5rem'
                   }}>
-                    BHK *
-                  </label>
-                  <select
-                    value={formData.bhk}
-                    onChange={(e) => setFormData({ ...formData, bhk: e.target.value })}
-                    required
-                    style={{
-                      width: '100%',
-                      padding: '0.875rem 1rem',
-                      border: '2px solid #e5e7eb',
-                      borderRadius: '0.75rem',
-                      fontSize: '1rem',
-                      transition: 'all 0.3s ease',
-                      background: '#f9fafb',
-                      cursor: 'pointer'
-                    }}
-                    onFocus={(e) => {
-                      e.target.style.borderColor = '#2563eb';
-                      e.target.style.background = 'white';
-                      e.target.style.boxShadow = '0 0 0 3px rgba(37, 99, 235, 0.1)';
-                    }}
-                    onBlur={(e) => {
-                      e.target.style.borderColor = '#e5e7eb';
-                      e.target.style.background = '#f9fafb';
-                      e.target.style.boxShadow = 'none';
-                    }}
-                  >
-                    <option value="">Select</option>
-                    <option value="1">1 BHK</option>
-                    <option value="2">2 BHK</option>
-                    <option value="3">3 BHK</option>
-                    <option value="4">4 BHK</option>
-                    <option value="5">5+ BHK</option>
-                  </select>
-                </div>
-                <div>
-                  <label style={{
-                    display: 'block',
-                    fontSize: '0.95rem',
-                    fontWeight: 600,
-                    color: '#374151',
-                    marginBottom: '0.5rem'
-                  }}>
-                    Bathrooms *
+                    Price (₹) *
                   </label>
                   <input
                     type="number"
-                    value={formData.bathrooms}
-                    onChange={(e) => setFormData({ ...formData, bathrooms: e.target.value })}
+                    value={formData.price}
+                    onChange={(e) => setFormData({ ...formData, price: e.target.value })}
                     required
-                    placeholder="2"
+                    placeholder="5000000"
+                    min="0"
+                    step="1000"
                     style={{
                       width: '100%',
                       padding: '0.875rem 1rem',
@@ -346,10 +282,88 @@ const AddProperty = ({ setCurrentPage }) => {
                     color: '#374151',
                     marginBottom: '0.5rem'
                   }}>
-                    Area (sq ft)
+                    BHK *
                   </label>
                   <input
                     type="number"
+                    value={formData.bhk}
+                    onChange={(e) => setFormData({ ...formData, bhk: e.target.value })}
+                    required
+                    placeholder="2"
+                    min="1"
+                    max="10"
+                    style={{
+                      width: '100%',
+                      padding: '0.875rem 1rem',
+                      border: '2px solid #e5e7eb',
+                      borderRadius: '0.75rem',
+                      fontSize: '1rem',
+                      transition: 'all 0.3s ease',
+                      background: '#f9fafb'
+                    }}
+                    onFocus={(e) => {
+                      e.target.style.borderColor = '#2563eb';
+                      e.target.style.background = 'white';
+                      e.target.style.boxShadow = '0 0 0 3px rgba(37, 99, 235, 0.1)';
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.borderColor = '#e5e7eb';
+                      e.target.style.background = '#f9fafb';
+                      e.target.style.boxShadow = 'none';
+                    }}
+                  />
+                </div>
+                <div>
+                  <label style={{
+                    display: 'block',
+                    fontSize: '0.95rem',
+                    fontWeight: 600,
+                    color: '#374151',
+                    marginBottom: '0.5rem'
+                  }}>
+                    Bathrooms *
+                  </label>
+                  <input
+                    type="number"
+                    value={formData.bathrooms}
+                    onChange={(e) => setFormData({ ...formData, bathrooms: e.target.value })}
+                    required
+                    placeholder="2"
+                    min="1"
+                    max="10"
+                    style={{
+                      width: '100%',
+                      padding: '0.875rem 1rem',
+                      border: '2px solid #e5e7eb',
+                      borderRadius: '0.75rem',
+                      fontSize: '1rem',
+                      transition: 'all 0.3s ease',
+                      background: '#f9fafb'
+                    }}
+                    onFocus={(e) => {
+                      e.target.style.borderColor = '#2563eb';
+                      e.target.style.background = 'white';
+                      e.target.style.boxShadow = '0 0 0 3px rgba(37, 99, 235, 0.1)';
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.borderColor = '#e5e7eb';
+                      e.target.style.background = '#f9fafb';
+                      e.target.style.boxShadow = 'none';
+                    }}
+                  />
+                </div>
+                <div>
+                  <label style={{
+                    display: 'block',
+                    fontSize: '0.95rem',
+                    fontWeight: 600,
+                    color: '#374151',
+                    marginBottom: '0.5rem'
+                  }}>
+                    Area (sqft)
+                  </label>
+                  <input
+                    type="text"
                     value={formData.area}
                     onChange={(e) => setFormData({ ...formData, area: e.target.value })}
                     placeholder="1200"
@@ -388,7 +402,7 @@ const AddProperty = ({ setCurrentPage }) => {
                     type="url"
                     value={formData.image}
                     onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                    placeholder="https://..."
+                    placeholder="https://example.com/image.jpg"
                     style={{
                       width: '100%',
                       padding: '0.875rem 1rem',
@@ -410,6 +424,45 @@ const AddProperty = ({ setCurrentPage }) => {
                     }}
                   />
                 </div>
+              </div>
+
+              <div>
+                <label style={{
+                  display: 'block',
+                  fontSize: '0.95rem',
+                  fontWeight: 600,
+                  color: '#374151',
+                  marginBottom: '0.5rem'
+                }}>
+                  Description *
+                </label>
+                <textarea
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  required
+                  placeholder="Enter property description..."
+                  rows={4}
+                  style={{
+                    width: '100%',
+                    padding: '0.875rem 1rem',
+                    border: '2px solid #e5e7eb',
+                    borderRadius: '0.75rem',
+                    fontSize: '1rem',
+                    transition: 'all 0.3s ease',
+                    background: '#f9fafb',
+                    resize: 'vertical'
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = '#2563eb';
+                    e.target.style.background = 'white';
+                    e.target.style.boxShadow = '0 0 0 3px rgba(37, 99, 235, 0.1)';
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = '#e5e7eb';
+                    e.target.style.background = '#f9fafb';
+                    e.target.style.boxShadow = 'none';
+                  }}
+                />
               </div>
 
               <div>

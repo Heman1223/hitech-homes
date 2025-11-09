@@ -4,11 +4,42 @@ import { PropertyContext } from '../context/PropertyContext';
 import Loader from '../components/Loader';
 
 const Listings = ({ setCurrentPage, setSelectedProperty }) => {
-  const { filteredProperties, loading, fetchProperties } = useContext(PropertyContext);
+  const { filteredProperties, loading, error, fetchProperties } = useContext(PropertyContext);
 
   useEffect(() => {
     fetchProperties();
   }, []);
+
+  if (loading) {
+    return <Loader />;
+  }
+
+  if (error) {
+    return (
+      <div style={{
+        padding: '2rem',
+        textAlign: 'center',
+        color: '#ef4444'
+      }}>
+        <h2>Error Loading Properties</h2>
+        <p>{error}</p>
+        <button 
+          onClick={() => fetchProperties()}
+          style={{
+            marginTop: '1rem',
+            padding: '0.75rem 1.5rem',
+            background: '#2563eb',
+            color: 'white',
+            border: 'none',
+            borderRadius: '0.5rem',
+            cursor: 'pointer'
+          }}
+        >
+          Retry
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -153,235 +184,160 @@ const Listings = ({ setCurrentPage, setSelectedProperty }) => {
               gap: '0.5rem'
             }}
             onMouseOver={(e) => {
+              e.target.style.background = '#eff6ff';
               e.target.style.borderColor = '#2563eb';
               e.target.style.color = '#2563eb';
-              e.target.style.background = 'white';
             }}
             onMouseOut={(e) => {
+              e.target.style.background = '#f9fafb';
               e.target.style.borderColor = '#e5e7eb';
               e.target.style.color = '#374151';
-              e.target.style.background = '#f9fafb';
             }}>
-              <SlidersHorizontal size={20} />
-              More Filters
+              <SlidersHorizontal size={18} />
+              Filters
             </button>
           </div>
         </div>
       </section>
 
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" style={{ padding: '2rem 1rem', minHeight: '70vh' }}>
-        <div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {filteredProperties.length === 0 ? (
           <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            marginBottom: '2rem',
-            paddingBottom: '1rem',
-            borderBottom: '1px solid #e5e7eb'
+            textAlign: 'center',
+            padding: '4rem 2rem',
+            color: '#6b7280'
           }}>
-            <div style={{ fontSize: '0.95rem', color: '#6b7280' }}>
-              <strong style={{ color: '#111827', fontWeight: 700 }}>{filteredProperties.length}</strong> properties found
-            </div>
-            <div style={{ display: 'flex', gap: '0.5rem' }}>
-              <button style={{
-                padding: '0.5rem 0.75rem',
-                border: '2px solid #2563eb',
-                borderRadius: '0.5rem',
-                background: '#2563eb',
-                color: 'white',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease'
-              }}>
-                <Grid size={20} />
-              </button>
-              <button style={{
-                padding: '0.5rem 0.75rem',
-                border: '2px solid #e5e7eb',
-                borderRadius: '0.5rem',
-                background: 'white',
-                color: '#6b7280',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease'
-              }}>
-                <List size={20} />
-              </button>
-            </div>
+            <Home size={64} style={{ margin: '0 auto 1rem', opacity: 0.5 }} />
+            <h3 style={{ fontSize: '1.5rem', fontWeight: 600, marginBottom: '0.5rem' }}>
+              No properties found
+            </h3>
+            <p>Try adjusting your search or filters.</p>
           </div>
-
-          {loading ? (
-            <Loader />
-          ) : filteredProperties.length === 0 ? (
-            <div style={{
-              textAlign: 'center',
-              padding: '4rem 2rem'
-            }}>
-              <Home style={{ width: '120px', height: '120px', margin: '0 auto 2rem', opacity: 0.4 }} />
-              <h3 style={{
-                fontSize: '1.5rem',
-                fontWeight: 700,
-                color: '#111827',
-                marginBottom: '0.5rem'
-              }}>No properties found</h3>
-              <p style={{
-                color: '#6b7280',
-                fontSize: '1rem',
-                marginBottom: '2rem'
-              }}>
-                Try adjusting your filters to see more results
-              </p>
-              <button 
-                onClick={() => fetchProperties()}
+        ) : (
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+            gap: '1.5rem'
+          }}>
+            {filteredProperties.map((property) => (
+              <article 
+                key={property._id}
+                onClick={() => {
+                  setSelectedProperty(property);
+                  setCurrentPage('property-details');
+                }}
                 style={{
-                  padding: '0.875rem 2rem',
-                  background: '#2563eb',
-                  color: 'white',
-                  borderRadius: '0.75rem',
-                  fontWeight: 600,
-                  border: 'none',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease'
+                  background: 'white',
+                  borderRadius: '1rem',
+                  overflow: 'hidden',
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+                  transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                  cursor: 'pointer'
                 }}
                 onMouseOver={(e) => {
-                  e.target.style.background = '#1d4ed8';
-                  e.target.style.transform = 'translateY(-2px)';
-                  e.target.style.boxShadow = '0 4px 12px rgba(37, 99, 235, 0.4)';
+                  e.currentTarget.style.transform = 'translateY(-8px)';
+                  e.currentTarget.style.boxShadow = '0 12px 24px rgba(0, 0, 0, 0.15)';
                 }}
                 onMouseOut={(e) => {
-                  e.target.style.background = '#2563eb';
-                  e.target.style.transform = 'translateY(0)';
-                  e.target.style.boxShadow = 'none';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.08)';
                 }}
               >
-                Clear Filters
-              </button>
-            </div>
-          ) : (
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
-              gap: '1.5rem'
-            }}>
-              {filteredProperties.map((property) => (
-                <article 
-                  key={property._id}
-                  onClick={() => {
-                    setSelectedProperty(property);
-                    setCurrentPage('property-details');
-                  }}
-                  style={{
-                    background: 'white',
-                    borderRadius: '1rem',
-                    overflow: 'hidden',
-                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
-                    transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                    cursor: 'pointer'
-                  }}
-                  onMouseOver={(e) => {
-                    e.currentTarget.style.transform = 'translateY(-8px)';
-                    e.currentTarget.style.boxShadow = '0 12px 24px rgba(0, 0, 0, 0.15)';
-                  }}
-                  onMouseOut={(e) => {
-                    e.currentTarget.style.transform = 'translateY(0)';
-                    e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.08)';
-                  }}
-                >
-                  <div style={{
-                    position: 'relative',
-                    height: '240px',
-                    overflow: 'hidden',
-                    background: '#e5e7eb'
+                <div style={{
+                  position: 'relative',
+                  height: '240px',
+                  overflow: 'hidden',
+                  background: '#e5e7eb'
+                }}>
+                  <img 
+                    src={property.images?.[0] || 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600'} 
+                    alt={property.title}
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      transition: 'transform 0.6s ease'
+                    }}
+                  />
+                </div>
+
+                <div style={{ padding: '1.5rem' }}>
+                  <div style={{ 
+                    fontSize: '1.75rem', 
+                    fontWeight: 800, 
+                    color: '#2563eb',
+                    marginBottom: '0.5rem'
                   }}>
-                    <img 
-                      src={property.image || 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600'} 
-                      alt={property.title}
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                        objectFit: 'cover',
-                        transition: 'transform 0.6s ease'
-                      }}
-                    />
+                    ₹{property.price?.toLocaleString('en-IN')}
                   </div>
 
-                  <div style={{ padding: '1.5rem' }}>
-                    <div style={{ 
-                      fontSize: '1.75rem', 
-                      fontWeight: 800, 
-                      color: '#2563eb',
-                      marginBottom: '0.5rem'
-                    }}>
-                      ₹{property.price?.toLocaleString('en-IN')}
-                    </div>
+                  <h3 style={{
+                    fontSize: '1.25rem',
+                    fontWeight: 700,
+                    color: '#111827',
+                    marginBottom: '0.5rem',
+                    display: '-webkit-box',
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: 'vertical',
+                    overflow: 'hidden'
+                  }}>
+                    {property.title}
+                  </h3>
 
-                    <h3 style={{
-                      fontSize: '1.25rem',
-                      fontWeight: 700,
-                      color: '#111827',
-                      marginBottom: '0.5rem',
-                      display: '-webkit-box',
-                      WebkitLineClamp: 2,
-                      WebkitBoxOrient: 'vertical',
-                      overflow: 'hidden'
-                    }}>
-                      {property.title}
-                    </h3>
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    color: '#6b7280',
+                    fontSize: '0.95rem',
+                    marginBottom: '1rem'
+                  }}>
+                    <MapPin size={16} />
+                    <span>{property.city}</span>
+                  </div>
 
+                  <div style={{
+                    display: 'flex',
+                    gap: '1.5rem',
+                    paddingTop: '1rem',
+                    borderTop: '1px solid #e5e7eb'
+                  }}>
                     <div style={{
                       display: 'flex',
                       alignItems: 'center',
                       gap: '0.5rem',
-                      color: '#6b7280',
-                      fontSize: '0.95rem',
-                      marginBottom: '1rem'
+                      color: '#4b5563',
+                      fontSize: '0.95rem'
                     }}>
-                      <MapPin size={16} />
-                      <span>{property.city}</span>
+                      <Bed size={18} />
+                      <span>{property.bhk} BHK</span>
                     </div>
-
                     <div style={{
                       display: 'flex',
-                      gap: '1.5rem',
-                      paddingTop: '1rem',
-                      borderTop: '1px solid #e5e7eb'
+                      alignItems: 'center',
+                      gap: '0.5rem',
+                      color: '#4b5563',
+                      fontSize: '0.95rem'
                     }}>
-                      <div style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.5rem',
-                        color: '#4b5563',
-                        fontSize: '0.95rem'
-                      }}>
-                        <Bed size={18} />
-                        <span>{property.bhk} BHK</span>
-                      </div>
-                      <div style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.5rem',
-                        color: '#4b5563',
-                        fontSize: '0.95rem'
-                      }}>
-                        <Bath size={18} />
-                        <span>{property.bathrooms || 2}</span>
-                      </div>
-                      <div style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.5rem',
-                        color: '#4b5563',
-                        fontSize: '0.95rem'
-                      }}>
-                        <Square size={18} />
-                        <span>{property.area || 1200} sqft</span>
-                      </div>
+                      <Bath size={18} />
+                      <span>{property.bathrooms || 2}</span>
+                    </div>
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.5rem',
+                      color: '#4b5563',
+                      fontSize: '0.95rem'
+                    }}>
+                      <Square size={18} />
+                      <span>{property.area || 1200} sqft</span>
                     </div>
                   </div>
-                </article>
-              ))}
-            </div>
-          )}
-        </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

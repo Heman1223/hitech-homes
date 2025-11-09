@@ -40,6 +40,14 @@ const propertySchema = new mongoose.Schema({
     required: [true, 'Please add an address'],
     trim: true
   },
+  area: {
+    type: String,
+    trim: true
+  },
+  amenities: [{
+    type: String,
+    trim: true
+  }],
   images: {
     type: [String],
     default: [],

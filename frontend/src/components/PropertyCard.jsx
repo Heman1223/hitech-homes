@@ -142,7 +142,7 @@ const PropertyCard = ({ property, onClick }) => {
       >
         <div style={imageContainerStyle}>
           <img 
-            src={property.image || 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=500'} 
+            src={property.images?.[0] || 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=500'} 
             alt={property.title} 
             style={imageStyle}
           />

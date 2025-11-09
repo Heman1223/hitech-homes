@@ -10,17 +10,26 @@ const AdminLogin = ({ setCurrentPage }) => {
   const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
-    setLoading(true);
-    const data = await login(formData.email, formData.password);
-    setLoading(false);
-    if (data.success) {
-      setCurrentPage('admin-dashboard');
-    } else {
-      setError(data.message || 'Login failed');
-    }
-  };
+  e.preventDefault();
+  setError('');
+  setLoading(true);
+
+  // Call login function from AuthContext
+  const data = await login(formData.email, formData.password);
+
+  setLoading(false);
+
+  if (data && data.success && data.data?.token) {
+    // ✅ Save JWT token for all future API calls
+    localStorage.setItem('token', data.data.token);
+
+    // Optional: show success message or redirect
+    setCurrentPage('admin-dashboard');
+  } else {
+    setError(data.message || 'Login failed');
+  }
+};
+
 
   return (
     <div style={{

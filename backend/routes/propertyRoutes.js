@@ -10,7 +10,7 @@ const {
   getCities
 } = require('../controllers/propertyController');
 const { protect } = require('../middleware/authMiddleware');
-const { uploadMedia } = require('../utils/upload');
+// const { uploadMedia } = require('../utils/upload'); // Temporarily commented out for JSON support
 
 // Public routes
 router.get('/', getAllProperties);
@@ -18,26 +18,10 @@ router.get('/filter', filterProperties);
 router.get('/cities', getCities);
 router.get('/:id', getPropertyById);
 
-// Protected routes (Admin only)
-router.post(
-  '/',
-  protect,
-  uploadMedia.fields([
-    { name: 'images', maxCount: 20 },
-    { name: 'videos', maxCount: 5 }
-  ]),
-  createProperty
-);
+// Protected routes (Admin only) - No upload middleware for now (JSON only)
+router.post('/', protect, createProperty);
 
-router.put(
-  '/:id',
-  protect,
-  uploadMedia.fields([
-    { name: 'images', maxCount: 20 },
-    { name: 'videos', maxCount: 5 }
-  ]),
-  updateProperty
-);
+router.put('/:id', protect, updateProperty);
 
 router.delete('/:id', protect, deleteProperty);
 

@@ -1,5 +1,5 @@
 const Property = require('../models/Property');
-const { uploadImage, uploadVideo } = require('../utils/cloudinary');
+// const { uploadImage, uploadVideo } = require('../utils/cloudinary'); // Temporarily commented out
 
 /**
  * @desc    Get all properties with pagination
@@ -62,7 +62,7 @@ const getPropertyById = async (req, res, next) => {
  */
 const createProperty = async (req, res, next) => {
   try {
-    const { title, description, price, bhk, bathrooms, city, address } = req.body;
+    const { title, description, price, bhk, bathrooms, city, address, area, amenities, images } = req.body;
 
     // Validation
     if (!title || !description || !price || !bhk || !bathrooms || !city || !address) {
@@ -70,28 +70,16 @@ const createProperty = async (req, res, next) => {
       throw new Error('Please provide all required fields');
     }
 
-    // Handle file uploads
-    let imageUrls = [];
-    let videoUrls = [];
+    // Handle amenities if string (fallback)
+    let amenitiesArray = amenities;
+    if (typeof amenities === 'string') {
+      amenitiesArray = amenities.split(',').map(a => a.trim()).filter(a => a);
+    }
 
-    if (req.files) {
-      // Upload images
-      if (req.files.images) {
-        const images = Array.isArray(req.files.images) ? req.files.images : [req.files.images];
-        for (const file of images) {
-          const result = await uploadImage(file.path);
-          imageUrls.push(result.url);
-        }
-      }
-
-      // Upload videos
-      if (req.files.videos) {
-        const videos = Array.isArray(req.files.videos) ? req.files.videos : [req.files.videos];
-        for (const file of videos) {
-          const result = await uploadVideo(file.path);
-          videoUrls.push(result.url);
-        }
-      }
+    // Handle images if string (single URL)
+    let imagesArray = images;
+    if (typeof images === 'string') {
+      imagesArray = [images];
     }
 
     const property = await Property.create({
@@ -102,8 +90,9 @@ const createProperty = async (req, res, next) => {
       bathrooms: parseInt(bathrooms),
       city,
       address,
-      images: imageUrls,
-      videos: videoUrls
+      area,
+      amenities: amenitiesArray || [],
+      images: imagesArray || []
     });
 
     res.status(201).json({
@@ -130,7 +119,7 @@ const updateProperty = async (req, res, next) => {
       throw new Error('Property not found');
     }
 
-    const { title, description, price, bhk, bathrooms, city, address } = req.body;
+    const { title, description, price, bhk, bathrooms, city, address, area, amenities, images } = req.body;
 
     // Update fields
     if (title) property.title = title;
@@ -140,24 +129,24 @@ const updateProperty = async (req, res, next) => {
     if (bathrooms) property.bathrooms = parseInt(bathrooms);
     if (city) property.city = city;
     if (address) property.address = address;
+    if (area) property.area = area;
 
-    // Handle new file uploads
-    if (req.files) {
-      if (req.files.images) {
-        const images = Array.isArray(req.files.images) ? req.files.images : [req.files.images];
-        for (const file of images) {
-          const result = await uploadImage(file.path);
-          property.images.push(result.url);
-        }
+    // Handle amenities
+    if (amenities) {
+      let amenitiesArray = amenities;
+      if (typeof amenities === 'string') {
+        amenitiesArray = amenities.split(',').map(a => a.trim()).filter(a => a);
       }
+      property.amenities = amenitiesArray;
+    }
 
-      if (req.files.videos) {
-        const videos = Array.isArray(req.files.videos) ? req.files.videos : [req.files.videos];
-        for (const file of videos) {
-          const result = await uploadVideo(file.path);
-          property.videos.push(result.url);
-        }
+    // Handle images (append if array)
+    if (images) {
+      let imagesArray = images;
+      if (typeof images === 'string') {
+        imagesArray = [images];
       }
+      property.images = [...property.images, ...imagesArray];
     }
 
     await property.save();
