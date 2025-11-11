@@ -95,6 +95,7 @@ const PropertyDetails = ({ property, setCurrentPage }) => {
       {/* Gallery */}
       <section style={{ padding: '2rem 0' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          // In PropertyDetails.jsx, update the gallery section:
           <div style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(4, 1fr)',
@@ -103,6 +104,7 @@ const PropertyDetails = ({ property, setCurrentPage }) => {
             borderRadius: '1rem',
             overflow: 'hidden'
           }}>
+            {/* Main Image */}
             <div style={{
               gridColumn: '1 / 3',
               gridRow: '1 / 3',
@@ -111,20 +113,32 @@ const PropertyDetails = ({ property, setCurrentPage }) => {
               cursor: 'pointer',
               background: '#e5e7eb'
             }}>
-              <img 
-                src={property.image || 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800'}
-                alt={property.title}
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                  transition: 'transform 0.5s ease'
-                }}
-                onMouseOver={(e) => e.target.style.transform = 'scale(1.1)'}
-                onMouseOut={(e) => e.target.style.transform = 'scale(1)'}
-              />
+              {property.video?.url ? (
+                <video 
+                  src={property.video.url}
+                  controls
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover'
+                  }}
+                />
+              ) : (
+                <img 
+                  src={property.images?.[0]?.url || 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800'}
+                  alt={property.title}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    transition: 'transform 0.5s ease'
+                  }}
+                />
+              )}
             </div>
-            {[1, 2, 3, 4].map((i) => (
+            
+            {/* Additional Images */}
+            {property.images?.slice(1, 5).map((image, i) => (
               <div key={i} style={{
                 position: 'relative',
                 overflow: 'hidden',
@@ -132,16 +146,14 @@ const PropertyDetails = ({ property, setCurrentPage }) => {
                 background: '#e5e7eb'
               }}>
                 <img 
-                  src={`https://images.unsplash.com/photo-${1600596542815 + i}?w=400`}
-                  alt={`Gallery ${i}`}
+                  src={image.url}
+                  alt={`Gallery ${i + 1}`}
                   style={{
                     width: '100%',
                     height: '100%',
                     objectFit: 'cover',
                     transition: 'transform 0.5s ease'
                   }}
-                  onMouseOver={(e) => e.target.style.transform = 'scale(1.1)'}
-                  onMouseOut={(e) => e.target.style.transform = 'scale(1)'}
                 />
               </div>
             ))}

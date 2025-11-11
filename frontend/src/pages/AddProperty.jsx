@@ -1,6 +1,7 @@
 import { useState, useContext } from 'react';
 import { PropertyContext } from '../context/PropertyContext';
 import AdminSidebar from '../components/AdminSidebar';
+import { Upload, X, Image as ImageIcon, Video } from 'lucide-react';
 import api from '../utils/api';
 
 const AddProperty = ({ setCurrentPage }) => {
@@ -14,12 +15,77 @@ const AddProperty = ({ setCurrentPage }) => {
     bhk: '',
     area: '',
     bathrooms: '',
-    image: '',
     amenities: ''
   });
+  const [imageFiles, setImageFiles] = useState([]);
+  const [imagePreviews, setImagePreviews] = useState([]);
+  const [videoFile, setVideoFile] = useState(null);
+  const [videoPreview, setVideoPreview] = useState(null);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
+
+  const handleImageChange = (e) => {
+    const files = Array.from(e.target.files);
+    
+    if (imageFiles.length + files.length > 5) {
+      setError('Maximum 5 images allowed');
+      return;
+    }
+
+    // Validate file sizes
+    const invalidFiles = files.filter(file => file.size > 5 * 1024 * 1024);
+    if (invalidFiles.length > 0) {
+      setError('Each image must be less than 5MB');
+      return;
+    }
+
+    setImageFiles(prev => [...prev, ...files]);
+    
+    // Create previews
+    files.forEach(file => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreviews(prev => [...prev, reader.result]);
+      };
+      reader.readAsDataURL(file);
+    });
+
+    setError('');
+  };
+
+  const handleVideoChange = (e) => {
+    const file = e.target.files[0];
+    
+    if (!file) return;
+
+    // Validate file size (50MB)
+    if (file.size > 50 * 1024 * 1024) {
+      setError('Video must be less than 50MB');
+      return;
+    }
+
+    setVideoFile(file);
+    
+    // Create preview
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setVideoPreview(reader.result);
+    };
+    reader.readAsDataURL(file);
+
+    setError('');
+  };
+
+  const removeImage = (index) => {
+    setImageFiles(prev => prev.filter((_, i) => i !== index));
+    setImagePreviews(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const removeVideo = () => {
+    setVideoFile(null);
+    setVideoPreview(null);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -27,19 +93,35 @@ const AddProperty = ({ setCurrentPage }) => {
     setError('');
     setSuccess(false);
     
-    const amenitiesArray = formData.amenities
-      .split(',')
-      .map(a => a.trim())
-      .filter(a => a);
-    
-    const imagesArray = formData.image ? [formData.image] : [];
-    
     try {
-      const response = await api.post('/properties', { 
-        ...formData, 
-        address: formData.address,
-        amenities: amenitiesArray,
-        images: imagesArray
+      // Create FormData
+      const formDataToSend = new FormData();
+      
+      // Append text fields
+      formDataToSend.append('title', formData.title);
+      formDataToSend.append('description', formData.description);
+      formDataToSend.append('price', formData.price);
+      formDataToSend.append('city', formData.city);
+      formDataToSend.append('address', formData.address);
+      formDataToSend.append('bhk', formData.bhk);
+      formDataToSend.append('bathrooms', formData.bathrooms);
+      if (formData.area) formDataToSend.append('area', formData.area);
+      if (formData.amenities) formDataToSend.append('amenities', formData.amenities);
+      
+      // Append image files
+      imageFiles.forEach(file => {
+        formDataToSend.append('images', file);
+      });
+      
+      // Append video file
+      if (videoFile) {
+        formDataToSend.append('video', videoFile);
+      }
+      
+      const response = await api.post('/properties', formDataToSend, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
       });
       
       if (response.data.success) {
@@ -63,7 +145,8 @@ const AddProperty = ({ setCurrentPage }) => {
       <div style={{
         flex: 1,
         background: '#f3f4f6',
-        padding: '2rem'
+        padding: '2rem',
+        minHeight: '100vh'
       }}>
         <div style={{ maxWidth: '1000px' }}>
           <h1 style={{
@@ -107,15 +190,13 @@ const AddProperty = ({ setCurrentPage }) => {
             padding: '3rem',
             boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)'
           }}>
-            <form onSubmit={handleSubmit} style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '1.5rem'
-            }}>
+            <form onSubmit={handleSubmit}>
+              {/* Basic Information */}
               <div style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(2, 1fr)',
-                gap: '1.5rem'
+                gap: '1.5rem',
+                marginBottom: '1.5rem'
               }}>
                 <div>
                   <label style={{
@@ -141,16 +222,6 @@ const AddProperty = ({ setCurrentPage }) => {
                       fontSize: '1rem',
                       transition: 'all 0.3s ease',
                       background: '#f9fafb'
-                    }}
-                    onFocus={(e) => {
-                      e.target.style.borderColor = '#2563eb';
-                      e.target.style.background = 'white';
-                      e.target.style.boxShadow = '0 0 0 3px rgba(37, 99, 235, 0.1)';
-                    }}
-                    onBlur={(e) => {
-                      e.target.style.borderColor = '#e5e7eb';
-                      e.target.style.background = '#f9fafb';
-                      e.target.style.boxShadow = 'none';
                     }}
                   />
                 </div>
@@ -179,16 +250,6 @@ const AddProperty = ({ setCurrentPage }) => {
                       transition: 'all 0.3s ease',
                       background: '#f9fafb'
                     }}
-                    onFocus={(e) => {
-                      e.target.style.borderColor = '#2563eb';
-                      e.target.style.background = 'white';
-                      e.target.style.boxShadow = '0 0 0 3px rgba(37, 99, 235, 0.1)';
-                    }}
-                    onBlur={(e) => {
-                      e.target.style.borderColor = '#e5e7eb';
-                      e.target.style.background = '#f9fafb';
-                      e.target.style.boxShadow = 'none';
-                    }}
                   />
                 </div>
                 <div>
@@ -215,16 +276,6 @@ const AddProperty = ({ setCurrentPage }) => {
                       fontSize: '1rem',
                       transition: 'all 0.3s ease',
                       background: '#f9fafb'
-                    }}
-                    onFocus={(e) => {
-                      e.target.style.borderColor = '#2563eb';
-                      e.target.style.background = 'white';
-                      e.target.style.boxShadow = '0 0 0 3px rgba(37, 99, 235, 0.1)';
-                    }}
-                    onBlur={(e) => {
-                      e.target.style.borderColor = '#e5e7eb';
-                      e.target.style.background = '#f9fafb';
-                      e.target.style.boxShadow = 'none';
                     }}
                   />
                 </div>
@@ -255,16 +306,6 @@ const AddProperty = ({ setCurrentPage }) => {
                       transition: 'all 0.3s ease',
                       background: '#f9fafb'
                     }}
-                    onFocus={(e) => {
-                      e.target.style.borderColor = '#2563eb';
-                      e.target.style.background = 'white';
-                      e.target.style.boxShadow = '0 0 0 3px rgba(37, 99, 235, 0.1)';
-                    }}
-                    onBlur={(e) => {
-                      e.target.style.borderColor = '#e5e7eb';
-                      e.target.style.background = '#f9fafb';
-                      e.target.style.boxShadow = 'none';
-                    }}
                   />
                 </div>
               </div>
@@ -272,7 +313,8 @@ const AddProperty = ({ setCurrentPage }) => {
               <div style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(2, 1fr)',
-                gap: '1.5rem'
+                gap: '1.5rem',
+                marginBottom: '1.5rem'
               }}>
                 <div>
                   <label style={{
@@ -300,16 +342,6 @@ const AddProperty = ({ setCurrentPage }) => {
                       fontSize: '1rem',
                       transition: 'all 0.3s ease',
                       background: '#f9fafb'
-                    }}
-                    onFocus={(e) => {
-                      e.target.style.borderColor = '#2563eb';
-                      e.target.style.background = 'white';
-                      e.target.style.boxShadow = '0 0 0 3px rgba(37, 99, 235, 0.1)';
-                    }}
-                    onBlur={(e) => {
-                      e.target.style.borderColor = '#e5e7eb';
-                      e.target.style.background = '#f9fafb';
-                      e.target.style.boxShadow = 'none';
                     }}
                   />
                 </div>
@@ -340,19 +372,9 @@ const AddProperty = ({ setCurrentPage }) => {
                       transition: 'all 0.3s ease',
                       background: '#f9fafb'
                     }}
-                    onFocus={(e) => {
-                      e.target.style.borderColor = '#2563eb';
-                      e.target.style.background = 'white';
-                      e.target.style.boxShadow = '0 0 0 3px rgba(37, 99, 235, 0.1)';
-                    }}
-                    onBlur={(e) => {
-                      e.target.style.borderColor = '#e5e7eb';
-                      e.target.style.background = '#f9fafb';
-                      e.target.style.boxShadow = 'none';
-                    }}
                   />
                 </div>
-                <div>
+                <div style={{ gridColumn: '1 / -1' }}>
                   <label style={{
                     display: 'block',
                     fontSize: '0.95rem',
@@ -376,57 +398,11 @@ const AddProperty = ({ setCurrentPage }) => {
                       transition: 'all 0.3s ease',
                       background: '#f9fafb'
                     }}
-                    onFocus={(e) => {
-                      e.target.style.borderColor = '#2563eb';
-                      e.target.style.background = 'white';
-                      e.target.style.boxShadow = '0 0 0 3px rgba(37, 99, 235, 0.1)';
-                    }}
-                    onBlur={(e) => {
-                      e.target.style.borderColor = '#e5e7eb';
-                      e.target.style.background = '#f9fafb';
-                      e.target.style.boxShadow = 'none';
-                    }}
-                  />
-                </div>
-                <div>
-                  <label style={{
-                    display: 'block',
-                    fontSize: '0.95rem',
-                    fontWeight: 600,
-                    color: '#374151',
-                    marginBottom: '0.5rem'
-                  }}>
-                    Image URL
-                  </label>
-                  <input
-                    type="url"
-                    value={formData.image}
-                    onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                    placeholder="https://example.com/image.jpg"
-                    style={{
-                      width: '100%',
-                      padding: '0.875rem 1rem',
-                      border: '2px solid #e5e7eb',
-                      borderRadius: '0.75rem',
-                      fontSize: '1rem',
-                      transition: 'all 0.3s ease',
-                      background: '#f9fafb'
-                    }}
-                    onFocus={(e) => {
-                      e.target.style.borderColor = '#2563eb';
-                      e.target.style.background = 'white';
-                      e.target.style.boxShadow = '0 0 0 3px rgba(37, 99, 235, 0.1)';
-                    }}
-                    onBlur={(e) => {
-                      e.target.style.borderColor = '#e5e7eb';
-                      e.target.style.background = '#f9fafb';
-                      e.target.style.boxShadow = 'none';
-                    }}
                   />
                 </div>
               </div>
 
-              <div>
+              <div style={{ marginBottom: '1.5rem' }}>
                 <label style={{
                   display: 'block',
                   fontSize: '0.95rem',
@@ -452,20 +428,10 @@ const AddProperty = ({ setCurrentPage }) => {
                     background: '#f9fafb',
                     resize: 'vertical'
                   }}
-                  onFocus={(e) => {
-                    e.target.style.borderColor = '#2563eb';
-                    e.target.style.background = 'white';
-                    e.target.style.boxShadow = '0 0 0 3px rgba(37, 99, 235, 0.1)';
-                  }}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = '#e5e7eb';
-                    e.target.style.background = '#f9fafb';
-                    e.target.style.boxShadow = 'none';
-                  }}
                 />
               </div>
 
-              <div>
+              <div style={{ marginBottom: '1.5rem' }}>
                 <label style={{
                   display: 'block',
                   fontSize: '0.95rem',
@@ -489,20 +455,185 @@ const AddProperty = ({ setCurrentPage }) => {
                     transition: 'all 0.3s ease',
                     background: '#f9fafb'
                   }}
-                  onFocus={(e) => {
-                    e.target.style.borderColor = '#2563eb';
-                    e.target.style.background = 'white';
-                    e.target.style.boxShadow = '0 0 0 3px rgba(37, 99, 235, 0.1)';
-                  }}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = '#e5e7eb';
-                    e.target.style.background = '#f9fafb';
-                    e.target.style.boxShadow = 'none';
-                  }}
                 />
               </div>
 
-              <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
+              {/* Image Upload */}
+              <div style={{ marginBottom: '1.5rem' }}>
+                <label style={{
+                  display: 'block',
+                  fontSize: '0.95rem',
+                  fontWeight: 600,
+                  color: '#374151',
+                  marginBottom: '0.5rem'
+                }}>
+                  Property Images (Max 5)
+                </label>
+                <div style={{
+                  border: '2px dashed #e5e7eb',
+                  borderRadius: '0.75rem',
+                  padding: '2rem',
+                  textAlign: 'center',
+                  background: '#f9fafb',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease'
+                }}
+                onClick={() => document.getElementById('images').click()}
+                onMouseOver={(e) => e.currentTarget.style.borderColor = '#2563eb'}
+                onMouseOut={(e) => e.currentTarget.style.borderColor = '#e5e7eb'}>
+                  <Upload size={40} style={{ color: '#6b7280', margin: '0 auto 1rem' }} />
+                  <p style={{ color: '#6b7280', marginBottom: '0.5rem' }}>
+                    Click to upload images or drag and drop
+                  </p>
+                  <p style={{ fontSize: '0.875rem', color: '#9ca3af' }}>
+                    PNG, JPG, WEBP up to 5MB each
+                  </p>
+                  <input
+                    id="images"
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={handleImageChange}
+                    style={{ display: 'none' }}
+                  />
+                </div>
+
+                {/* Image Previews */}
+                {imagePreviews.length > 0 && (
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
+                    gap: '1rem',
+                    marginTop: '1rem'
+                  }}>
+                    {imagePreviews.map((preview, index) => (
+                      <div key={index} style={{
+                        position: 'relative',
+                        borderRadius: '0.75rem',
+                        overflow: 'hidden',
+                        aspectRatio: '1',
+                        background: '#e5e7eb'
+                      }}>
+                        <img
+                          src={preview}
+                          alt={`Preview ${index + 1}`}
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover'
+                          }}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => removeImage(index)}
+                          style={{
+                            position: 'absolute',
+                            top: '0.5rem',
+                            right: '0.5rem',
+                            background: '#ef4444',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '50%',
+                            width: '2rem',
+                            height: '2rem',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s ease'
+                          }}
+                        >
+                          <X size={16} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Video Upload */}
+              <div style={{ marginBottom: '2rem' }}>
+                <label style={{
+                  display: 'block',
+                  fontSize: '0.95rem',
+                  fontWeight: 600,
+                  color: '#374151',
+                  marginBottom: '0.5rem'
+                }}>
+                  Property Video (Optional)
+                </label>
+                <div style={{
+                  border: '2px dashed #e5e7eb',
+                  borderRadius: '0.75rem',
+                  padding: '2rem',
+                  textAlign: 'center',
+                  background: '#f9fafb',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease'
+                }}
+                onClick={() => document.getElementById('video').click()}
+                onMouseOver={(e) => e.currentTarget.style.borderColor = '#2563eb'}
+                onMouseOut={(e) => e.currentTarget.style.borderColor = '#e5e7eb'}>
+                  <Video size={40} style={{ color: '#6b7280', margin: '0 auto 1rem' }} />
+                  <p style={{ color: '#6b7280', marginBottom: '0.5rem' }}>
+                    Click to upload video
+                  </p>
+                  <p style={{ fontSize: '0.875rem', color: '#9ca3af' }}>
+                    MP4, MOV up to 50MB
+                  </p>
+                  <input
+                    id="video"
+                    type="file"
+                    accept="video/*"
+                    onChange={handleVideoChange}
+                    style={{ display: 'none' }}
+                  />
+                </div>
+
+                {/* Video Preview */}
+                {videoPreview && (
+                  <div style={{
+                    position: 'relative',
+                    borderRadius: '0.75rem',
+                    overflow: 'hidden',
+                    marginTop: '1rem',
+                    maxWidth: '400px'
+                  }}>
+                    <video
+                      src={videoPreview}
+                      controls
+                      style={{
+                        width: '100%',
+                        borderRadius: '0.75rem'
+                      }}
+                    />
+                    <button
+                      type="button"
+                      onClick={removeVideo}
+                      style={{
+                        position: 'absolute',
+                        top: '0.5rem',
+                        right: '0.5rem',
+                        background: '#ef4444',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '50%',
+                        width: '2rem',
+                        height: '2rem',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease'
+                      }}
+                    >
+                      <X size={16} />
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              <div style={{ display: 'flex', gap: '1rem' }}>
                 <button
                   type="submit"
                   disabled={loading}
@@ -520,16 +651,6 @@ const AddProperty = ({ setCurrentPage }) => {
                     opacity: loading ? 0.7 : 1,
                     boxShadow: '0 4px 15px rgba(37, 99, 235, 0.3)'
                   }}
-                  onMouseOver={(e) => {
-                    if (!loading) {
-                      e.target.style.transform = 'translateY(-2px)';
-                      e.target.style.boxShadow = '0 8px 25px rgba(37, 99, 235, 0.4)';
-                    }
-                  }}
-                  onMouseOut={(e) => {
-                    e.target.style.transform = 'translateY(0)';
-                    e.target.style.boxShadow = '0 4px 15px rgba(37, 99, 235, 0.3)';
-                  }}
                 >
                   {loading ? 'Adding Property...' : 'Add Property'}
                 </button>
@@ -546,12 +667,6 @@ const AddProperty = ({ setCurrentPage }) => {
                     border: '2px solid #e5e7eb',
                     cursor: 'pointer',
                     transition: 'all 0.3s ease'
-                  }}
-                  onMouseOver={(e) => {
-                    e.target.style.background = '#e5e7eb';
-                  }}
-                  onMouseOut={(e) => {
-                    e.target.style.background = '#f3f4f6';
                   }}
                 >
                   Cancel

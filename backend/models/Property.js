@@ -49,24 +49,21 @@ const propertySchema = new mongoose.Schema({
     trim: true
   }],
   images: {
-    type: [String],
-    default: [],
-    validate: {
-      validator: function(arr) {
-        return arr.length <= 20;
-      },
-      message: 'Cannot upload more than 20 images'
-    }
-  },
-  videos: {
-    type: [String],
+    type: [{
+      url: String,
+      publicId: String
+    }],
     default: [],
     validate: {
       validator: function(arr) {
         return arr.length <= 5;
       },
-      message: 'Cannot upload more than 5 videos'
+      message: 'Cannot upload more than 5 images'
     }
+  },
+  video: {
+    url: String,
+    publicId: String
   },
   createdAt: {
     type: Date,

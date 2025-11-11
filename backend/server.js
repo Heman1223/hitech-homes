@@ -1,17 +1,22 @@
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '.env') });
+
 const express = require('express');
-const dotenv = require('dotenv');
 const cors = require('cors');
 const connectDB = require('./config/db');
 const errorHandler = require('./middleware/errorHandler');
 
-// Import routes
 const propertyRoutes = require('./routes/propertyRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const enquiryRoutes = require('./routes/enquiryRoutes');
+const authRoutes = require('./routes/authRoutes');
 
-// Load environment variables
-dotenv.config();
-
+console.log('ENV LOADED:', {
+  CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME,
+  CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY,
+  CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET ? '***' : undefined,
+  CLIENT_URL: process.env.CLIENT_URL
+});
 // Connect to database
 connectDB();
 
@@ -20,7 +25,7 @@ const app = express();
 
 // Middleware
 app.use(cors({
-  origin: process.env.CLIENT_URL || '*',
+  origin: process.env.CLIENT_URL || 'http://localhost:3001',
   credentials: true
 }));
 app.use(express.json());
@@ -30,6 +35,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/admin', adminRoutes);
 app.use('/api/properties', propertyRoutes);
 app.use('/api/enquiries', enquiryRoutes);
+app.use('/api/auth', authRoutes); // ADD THIS LINE
 
 // Health check route
 app.get('/api/health', (req, res) => {

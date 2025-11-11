@@ -1,6 +1,11 @@
-import { MapPin, Bed, Bath, Square } from 'lucide-react';
+import { MapPin, Bed, Bath, Square, Play } from 'lucide-react';
 
 const PropertyCard = ({ property, onClick }) => {
+  // Get the first image or fallback
+  const displayImage = property.images?.[0]?.url || 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=500';
+  const hasVideo = property.video?.url;
+  const hasMultipleImages = property.images?.length > 1;
+
   const cardStyle = {
     background: 'white',
     borderRadius: '1rem',
@@ -47,6 +52,28 @@ const PropertyCard = ({ property, onClick }) => {
     backdropFilter: 'blur(10px)',
     zIndex: 10,
     boxShadow: '0 4px 12px rgba(220, 38, 38, 0.3)'
+  };
+
+  const mediaIndicatorStyle = {
+    position: 'absolute',
+    bottom: '1rem',
+    left: '1rem',
+    display: 'flex',
+    gap: '0.5rem',
+    zIndex: 10
+  };
+
+  const indicatorBadgeStyle = {
+    background: 'rgba(0, 0, 0, 0.7)',
+    backdropFilter: 'blur(10px)',
+    color: 'white',
+    padding: '0.5rem 0.75rem',
+    borderRadius: '0.5rem',
+    fontSize: '0.875rem',
+    fontWeight: 600,
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.5rem'
   };
 
   const contentStyle = {
@@ -142,12 +169,32 @@ const PropertyCard = ({ property, onClick }) => {
       >
         <div style={imageContainerStyle}>
           <img 
-            src={property.images?.[0] || 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=500'} 
+            src={displayImage} 
             alt={property.title} 
             style={imageStyle}
           />
           <div style={badgeStyle}>
             ₹{property.price?.toLocaleString('en-IN')}
+          </div>
+
+          {/* Media Indicators */}
+          <div style={mediaIndicatorStyle}>
+            {hasMultipleImages && (
+              <div style={indicatorBadgeStyle}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                  <circle cx="8.5" cy="8.5" r="1.5"/>
+                  <polyline points="21 15 16 10 5 21"/>
+                </svg>
+                {property.images.length}
+              </div>
+            )}
+            {hasVideo && (
+              <div style={indicatorBadgeStyle}>
+                <Play size={16} fill="currentColor" />
+                Video
+              </div>
+            )}
           </div>
         </div>
         
