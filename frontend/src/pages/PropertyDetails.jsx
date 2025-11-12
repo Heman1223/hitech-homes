@@ -1,13 +1,28 @@
-import { useState } from 'react';
-import { MapPin, Bed, Bath, Square, ChevronRight, Phone, Mail, Wifi, Car, Dumbbell, Shield, Send } from 'lucide-react';
-import api from '../utils/api';
+import { useState } from "react";
+import {
+  MapPin,
+  Bed,
+  Bath,
+  Square,
+  ChevronRight,
+  Phone,
+  Mail,
+  Wifi,
+  Car,
+  Dumbbell,
+  Shield,
+  Send,
+  Home as HomeIcon,
+  Sparkles,
+} from "lucide-react";
+import api from "../utils/api";
 
 const PropertyDetails = ({ property, setCurrentPage }) => {
-  const [formData, setFormData] = useState({ 
-    name: '', 
-    email: '', 
-    phone: '', 
-    message: '' 
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    message: "",
   });
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -16,145 +31,213 @@ const PropertyDetails = ({ property, setCurrentPage }) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await api.post('/enquiries', { 
-        ...formData, 
-        propertyId: property._id 
+      const response = await api.post("/enquiries", {
+        ...formData,
+        propertyId: property._id,
       });
       if (response.data.success) {
         setSubmitted(true);
-        setFormData({ name: '', email: '', phone: '', message: '' });
+        setFormData({ name: "", email: "", phone: "", message: "" });
       }
     } catch (error) {
-      console.error('Error submitting enquiry:', error);
+      console.error("Error submitting enquiry:", error);
     }
     setLoading(false);
   };
 
   if (!property) {
     return (
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <p style={{ color: '#6b7280' }}>Property not found</p>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-sky-50 to-red-50">
+        <div className="text-center p-8 bg-white rounded-2xl shadow-2xl max-w-md border-2 border-sky-200">
+          <div className="w-16 h-16 bg-gradient-to-br from-sky-400 to-sky-600 rounded-full flex items-center justify-center mx-auto mb-4">
+            <HomeIcon size={32} className="text-white" />
+          </div>
+          <h2
+            className="text-2xl font-bold text-gray-900 mb-3"
+            style={{ fontFamily: "'Poppins', sans-serif" }}
+          >
+            Property Not Found
+          </h2>
+          <p
+            className="text-gray-600 mb-6"
+            style={{ fontFamily: "'Inter', sans-serif" }}
+          >
+            The property you're looking for doesn't exist.
+          </p>
+          <button
+            onClick={() => setCurrentPage("listings")}
+            className="px-6 py-3 bg-gradient-to-r from-sky-500 to-sky-600 text-white font-semibold rounded-lg hover:shadow-lg transition-all"
+            style={{ fontFamily: "'Inter', sans-serif" }}
+          >
+            View All Properties
+          </button>
+        </div>
       </div>
     );
   }
 
-  const defaultAmenities = property.amenities || ['Swimming Pool', 'Gym', 'Parking', 'Security', '24/7 Water', 'Power Backup'];
+  const defaultAmenities = property.amenities || [
+    "Swimming Pool",
+    "Gym",
+    "Parking",
+    "Security",
+    "24/7 Water",
+    "Power Backup",
+  ];
 
   return (
-    <div>
-      {/* Breadcrumb */}
-      <section style={{
-        padding: '1.5rem 0',
-        background: '#f9fafb',
-        borderBottom: '1px solid #e5e7eb'
-      }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <nav style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            flexWrap: 'wrap'
-          }}>
-            <span 
-              onClick={() => setCurrentPage('home')} 
+    <div
+      style={{ fontFamily: "'Inter', sans-serif" }}
+      className="bg-gradient-to-b from-sky-50/30 to-white"
+    >
+      {/* Hero Section */}
+      <section className="relative py-20 overflow-hidden bg-gradient-to-br from-sky-500 via-sky-600 to-red-600">
+        {/* Animated Background Shapes */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute top-0 left-0 w-96 h-96 bg-white/10 rounded-full blur-3xl animate-pulse"></div>
+          <div
+            className="absolute bottom-0 right-0 w-96 h-96 bg-red-400/20 rounded-full blur-3xl animate-pulse"
+            style={{ animationDelay: "1s" }}
+          ></div>
+          <div
+            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-sky-300/20 rounded-full blur-2xl animate-pulse"
+            style={{ animationDelay: "0.5s" }}
+          ></div>
+        </div>
+
+        {/* Animated Particles */}
+        <div className="absolute inset-0 overflow-hidden">
+          {[...Array(15)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute w-2 h-2 bg-white/30 rounded-full animate-pulse"
               style={{
-                color: '#6b7280',
-                fontSize: '0.95rem',
-                cursor: 'pointer',
-                transition: 'color 0.2s ease'
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 3}s`,
+                animationDuration: `${2 + Math.random() * 3}s`,
               }}
-              onMouseOver={(e) => e.target.style.color = '#2563eb'}
-              onMouseOut={(e) => e.target.style.color = '#6b7280'}
+            ></div>
+          ))}
+        </div>
+
+        {/* Geometric Pattern Overlay */}
+        <div className="absolute inset-0 opacity-10">
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage: `repeating-linear-gradient(45deg, transparent, transparent 35px, rgba(255,255,255,.1) 35px, rgba(255,255,255,.1) 70px)`,
+            }}
+          ></div>
+        </div>
+
+        <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
+          <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-md px-4 py-2 rounded-full mb-4">
+            <Sparkles size={18} className="text-yellow-300" />
+            <span
+              className="text-sm font-semibold"
+              style={{ fontFamily: "'Inter', sans-serif" }}
+            >
+              Property Details
+            </span>
+          </div>
+
+          <h1
+            className="text-4xl md:text-5xl font-extrabold mb-4 drop-shadow-2xl"
+            style={{ fontFamily: "'Poppins', sans-serif" }}
+          >
+            Your <span className="text-red-200">Dream Home</span> Awaits
+          </h1>
+          <p
+            className="text-base md:text-lg text-white/95 leading-relaxed drop-shadow-lg max-w-2xl mx-auto"
+            style={{ fontFamily: "'Inter', sans-serif" }}
+          >
+            Explore every detail of this exceptional property and take the first
+            step towards making it yours.
+          </p>
+        </div>
+      </section>
+
+      {/* Breadcrumb */}
+      <section className="bg-white border-b-2 border-sky-100 py-4 sticky top-20 z-30 backdrop-blur-md bg-white/95 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <nav
+            className="flex items-center gap-2 flex-wrap"
+            style={{ fontFamily: "'Inter', sans-serif" }}
+          >
+            <span
+              onClick={() => setCurrentPage("home")}
+              className="text-gray-600 text-sm cursor-pointer hover:text-sky-600 transition-colors font-medium"
             >
               Home
             </span>
-            <ChevronRight size={16} style={{ color: '#d1d5db' }} />
-            <span 
-              onClick={() => setCurrentPage('listings')} 
-              style={{
-                color: '#6b7280',
-                fontSize: '0.95rem',
-                cursor: 'pointer',
-                transition: 'color 0.2s ease'
-              }}
-              onMouseOver={(e) => e.target.style.color = '#2563eb'}
-              onMouseOut={(e) => e.target.style.color = '#6b7280'}
+            <ChevronRight size={16} className="text-gray-400" />
+            <span
+              onClick={() => setCurrentPage("listings")}
+              className="text-gray-600 text-sm cursor-pointer hover:text-sky-600 transition-colors font-medium"
             >
               Properties
             </span>
-            <ChevronRight size={16} style={{ color: '#d1d5db' }} />
-            <span style={{
-              color: '#111827',
-              fontWeight: 600,
-              fontSize: '0.95rem'
-            }}>{property.title}</span>
+            <ChevronRight size={16} className="text-gray-400" />
+            <span className="text-gray-900 font-semibold text-sm line-clamp-1">
+              {property.title}
+            </span>
           </nav>
         </div>
       </section>
 
-      {/* Gallery */}
-      <section style={{ padding: '2rem 0' }}>
+      {/* Gallery with Borders */}
+      <section className="py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          // In PropertyDetails.jsx, update the gallery section:
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(4, 1fr)',
-            gridTemplateRows: 'repeat(2, 300px)',
-            gap: '1rem',
-            borderRadius: '1rem',
-            overflow: 'hidden'
-          }}>
-            {/* Main Image */}
-            <div style={{
-              gridColumn: '1 / 3',
-              gridRow: '1 / 3',
-              position: 'relative',
-              overflow: 'hidden',
-              cursor: 'pointer',
-              background: '#e5e7eb'
-            }}>
+          <div className="grid grid-cols-1 md:grid-cols-4 grid-rows-2 gap-3 md:gap-4">
+            {/* Main Image/Video */}
+            <div className="md:col-span-2 md:row-span-2 relative overflow-hidden rounded-2xl border-4 border-sky-200 shadow-xl group bg-gray-100">
               {property.video?.url ? (
-                <video 
+                <video
                   src={property.video.url}
                   controls
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover'
-                  }}
+                  className="w-full h-full object-cover min-h-[400px] md:min-h-[600px]"
                 />
               ) : (
-                <img 
-                  src={property.images?.[0]?.url || 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800'}
+                <img
+                  src={
+                    property.images?.[0]?.url ||
+                    "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800"
+                  }
                   alt={property.title}
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover',
-                    transition: 'transform 0.5s ease'
-                  }}
+                  className="w-full h-full object-cover min-h-[400px] md:min-h-[600px] group-hover:scale-110 transition-transform duration-700"
                 />
               )}
+              {/* Featured Badge */}
+              <div className="absolute top-4 left-4 bg-gradient-to-r from-red-500 to-red-600 text-white px-4 py-2 rounded-full font-bold text-xs shadow-2xl flex items-center gap-1 animate-pulse">
+                <Sparkles size={14} />
+                Featured
+              </div>
             </div>
-            
-            {/* Additional Images */}
+
+            {/* Additional Images with Borders */}
             {property.images?.slice(1, 5).map((image, i) => (
-              <div key={i} style={{
-                position: 'relative',
-                overflow: 'hidden',
-                cursor: 'pointer',
-                background: '#e5e7eb'
-              }}>
-                <img 
+              <div
+                key={i}
+                className="relative overflow-hidden rounded-xl border-3 border-sky-200 shadow-lg group bg-gray-100 h-[180px] md:h-[290px]"
+              >
+                <img
                   src={image.url}
                   alt={`Gallery ${i + 1}`}
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover',
-                    transition: 'transform 0.5s ease'
-                  }}
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                 />
+              </div>
+            ))}
+
+            {/* Placeholder if less than 5 images */}
+            {[
+              ...Array(Math.max(0, 4 - (property.images?.length - 1 || 0))),
+            ].map((_, i) => (
+              <div
+                key={`placeholder-${i}`}
+                className="relative overflow-hidden rounded-xl border-3 border-sky-100 shadow-lg bg-gradient-to-br from-sky-50 to-gray-50 h-[180px] md:h-[290px] flex items-center justify-center"
+              >
+                <HomeIcon size={48} className="text-sky-200" />
               </div>
             ))}
           </div>
@@ -162,82 +245,77 @@ const PropertyDetails = ({ property, setCurrentPage }) => {
       </section>
 
       {/* Details Layout */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 400px',
-          gap: '2rem',
-          padding: '2rem 0'
-        }}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
-          <div>
+          <div className="lg:col-span-2">
             {/* Property Header */}
-            <div style={{ marginBottom: '2rem' }}>
-              <span style={{
-                display: 'inline-block',
-                padding: '0.5rem 1rem',
-                background: '#10b981',
-                color: 'white',
-                borderRadius: '0.5rem',
-                fontWeight: 600,
-                fontSize: '0.875rem',
-                marginBottom: '1rem'
-              }}>For Sale</span>
-              <h1 style={{
-                fontSize: 'clamp(2rem, 3vw, 2.5rem)',
-                fontWeight: 800,
-                color: '#111827',
-                marginBottom: '1rem',
-                lineHeight: 1.2
-              }}>{property.title}</h1>
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-                color: '#6b7280',
-                fontSize: '1.125rem',
-                marginBottom: '1.5rem'
-              }}>
-                <MapPin size={20} />
-                <span>{property.address || property.city}</span>
+            <div className="bg-white rounded-2xl p-6 md:p-8 shadow-xl border-2 border-sky-100 mb-6">
+              <span
+                className="inline-block px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-full font-bold text-xs mb-4 shadow-lg"
+                style={{ fontFamily: "'Inter', sans-serif" }}
+              >
+                For Sale
+              </span>
+              <h1
+                className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-900 mb-4 leading-tight"
+                style={{ fontFamily: "'Poppins', sans-serif" }}
+              >
+                {property.title}
+              </h1>
+              <div
+                className="flex items-center gap-2 text-gray-600 text-base md:text-lg mb-6"
+                style={{ fontFamily: "'Inter', sans-serif" }}
+              >
+                <MapPin size={20} className="text-red-500" />
+                <span className="font-semibold">
+                  {property.address || property.city}
+                </span>
               </div>
 
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '2rem',
-                padding: '1.5rem 0',
-                borderTop: '1px solid #e5e7eb',
-                borderBottom: '1px solid #e5e7eb'
-              }}>
+              <div className="flex flex-wrap gap-6 pt-6 border-t-2 border-sky-100">
                 {[
-                  { icon: <Bed size={24} />, value: property.bhk, label: 'Bedrooms' },
-                  { icon: <Bath size={24} />, value: property.bathrooms || 2, label: 'Bathrooms' },
-                  { icon: <Square size={24} />, value: property.area || 1200, label: 'Sq. Ft.' }
+                  {
+                    icon: <Bed size={28} />,
+                    value: property.bhk,
+                    label: "Bedrooms",
+                    color: "from-sky-500 to-sky-600",
+                  },
+                  {
+                    icon: <Bath size={28} />,
+                    value: property.bathrooms || 2,
+                    label: "Bathrooms",
+                    color: "from-blue-500 to-blue-600",
+                  },
+                  {
+                    icon: <Square size={28} />,
+                    value: property.area || 1200,
+                    label: "Sq. Ft.",
+                    color: "from-red-500 to-red-600",
+                  },
                 ].map((meta, idx) => (
-                  <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                    <div style={{
-                      width: '2.5rem',
-                      height: '2.5rem',
-                      background: '#eff6ff',
-                      color: '#2563eb',
-                      borderRadius: '0.5rem',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center'
-                    }}>
+                  <div
+                    key={idx}
+                    className="flex items-center gap-3 bg-gradient-to-br from-sky-50 to-white rounded-xl p-4 border-2 border-sky-100 flex-1 min-w-[140px]"
+                  >
+                    <div
+                      className={`w-12 h-12 bg-gradient-to-br ${meta.color} text-white rounded-xl flex items-center justify-center shadow-lg`}
+                    >
                       {meta.icon}
                     </div>
                     <div>
-                      <div style={{
-                        fontSize: '1.25rem',
-                        fontWeight: 700,
-                        color: '#111827'
-                      }}>{meta.value}</div>
-                      <div style={{
-                        fontSize: '0.875rem',
-                        color: '#6b7280'
-                      }}>{meta.label}</div>
+                      <div
+                        className="text-2xl font-extrabold text-gray-900"
+                        style={{ fontFamily: "'Poppins', sans-serif" }}
+                      >
+                        {meta.value}
+                      </div>
+                      <div
+                        className="text-xs text-gray-600 font-semibold"
+                        style={{ fontFamily: "'Inter', sans-serif" }}
+                      >
+                        {meta.label}
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -245,87 +323,59 @@ const PropertyDetails = ({ property, setCurrentPage }) => {
             </div>
 
             {/* Description */}
-            <div style={{
-              background: 'white',
-              borderRadius: '1rem',
-              padding: '2rem',
-              marginBottom: '2rem',
-              boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
-            }}>
-              <h2 style={{
-                fontSize: '1.5rem',
-                fontWeight: 700,
-                color: '#111827',
-                marginBottom: '1rem'
-              }}>Property Description</h2>
-              <p style={{
-                color: '#4b5563',
-                lineHeight: 1.8,
-                fontSize: '1rem'
-              }}>
-                {property.description || 'Beautiful property with modern amenities and excellent location. This stunning residence offers spacious living areas, high-quality finishes, and a prime location close to schools, shopping, and entertainment.'}
+            <div className="bg-white rounded-2xl p-6 md:p-8 shadow-xl border-2 border-sky-100 mb-6">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-1 h-8 bg-gradient-to-b from-sky-500 to-red-500 rounded-full"></div>
+                <h2
+                  className="text-2xl font-bold text-gray-900"
+                  style={{ fontFamily: "'Poppins', sans-serif" }}
+                >
+                  Property Description
+                </h2>
+              </div>
+              <p
+                className="text-gray-700 leading-relaxed text-base"
+                style={{ fontFamily: "'Inter', sans-serif" }}
+              >
+                {property.description ||
+                  "Beautiful property with modern amenities and excellent location. This stunning residence offers spacious living areas, high-quality finishes, and a prime location close to schools, shopping, and entertainment. Perfect for families looking for comfort and convenience in a prestigious neighborhood."}
               </p>
             </div>
 
             {/* Amenities */}
-            <div style={{
-              background: 'white',
-              borderRadius: '1rem',
-              padding: '2rem',
-              marginBottom: '2rem',
-              boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
-            }}>
-              <h2 style={{
-                fontSize: '1.5rem',
-                fontWeight: 700,
-                color: '#111827',
-                marginBottom: '1rem'
-              }}>Features & Amenities</h2>
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
-                gap: '1.5rem'
-              }}>
+            <div className="bg-white rounded-2xl p-6 md:p-8 shadow-xl border-2 border-sky-100">
+              <div className="flex items-center gap-2 mb-6">
+                <div className="w-1 h-8 bg-gradient-to-b from-sky-500 to-red-500 rounded-full"></div>
+                <h2
+                  className="text-2xl font-bold text-gray-900"
+                  style={{ fontFamily: "'Poppins', sans-serif" }}
+                >
+                  Features & Amenities
+                </h2>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {defaultAmenities.map((amenity, idx) => (
-                  <div key={idx} style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.75rem',
-                    padding: '1rem',
-                    background: '#f9fafb',
-                    borderRadius: '0.75rem',
-                    transition: 'all 0.3s ease',
-                    cursor: 'pointer'
-                  }}
-                  onMouseOver={(e) => {
-                    e.currentTarget.style.background = '#eff6ff';
-                    e.currentTarget.style.transform = 'translateX(5px)';
-                  }}
-                  onMouseOut={(e) => {
-                    e.currentTarget.style.background = '#f9fafb';
-                    e.currentTarget.style.transform = 'translateX(0)';
-                  }}>
-                    <div style={{
-                      width: '2rem',
-                      height: '2rem',
-                      background: '#2563eb',
-                      color: 'white',
-                      borderRadius: '0.5rem',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      flexShrink: 0
-                    }}>
-                      {idx % 4 === 0 ? <Wifi size={20} /> :
-                       idx % 4 === 1 ? <Dumbbell size={20} /> :
-                       idx % 4 === 2 ? <Car size={20} /> :
-                       <Shield size={20} />}
+                  <div
+                    key={idx}
+                    className="flex items-center gap-3 p-4 bg-gradient-to-r from-sky-50 to-white rounded-xl border-2 border-sky-100 hover:border-sky-300 hover:shadow-lg transition-all duration-300 group cursor-pointer"
+                  >
+                    <div className="w-10 h-10 bg-gradient-to-br from-sky-500 to-sky-600 text-white rounded-lg flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform shadow-md">
+                      {idx % 4 === 0 ? (
+                        <Wifi size={20} />
+                      ) : idx % 4 === 1 ? (
+                        <Dumbbell size={20} />
+                      ) : idx % 4 === 2 ? (
+                        <Car size={20} />
+                      ) : (
+                        <Shield size={20} />
+                      )}
                     </div>
-                    <span style={{
-                      fontWeight: 600,
-                      color: '#374151',
-                      fontSize: '0.95rem'
-                    }}>{amenity}</span>
+                    <span
+                      className="font-semibold text-gray-800 text-sm"
+                      style={{ fontFamily: "'Inter', sans-serif" }}
+                    >
+                      {amenity}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -333,215 +383,149 @@ const PropertyDetails = ({ property, setCurrentPage }) => {
           </div>
 
           {/* Sidebar */}
-          <div style={{ position: 'sticky', top: '2rem', height: 'fit-content' }}>
-            <div style={{
-              background: 'white',
-              borderRadius: '1rem',
-              padding: '2rem',
-              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
-            }}>
-              <div style={{
-                textAlign: 'center',
-                padding: '1.5rem',
-                background: 'linear-gradient(135deg, #2563eb 0%, #1e40af 100%)',
-                borderRadius: '0.75rem',
-                marginBottom: '1.5rem',
-                position: 'relative'
-              }}>
-                <span style={{
-                  fontSize: '2.5rem',
-                  fontWeight: 900,
-                  color: 'white',
-                  marginBottom: '0.25rem',
-                  display: 'block'
-                }}>₹{property.price?.toLocaleString('en-IN')}</span>
-                <span style={{
-                  color: 'rgba(255, 255, 255, 0.9)',
-                  fontSize: '1rem'
-                }}>Total Price</span>
+          <div className="lg:col-span-1">
+            <div className="sticky top-32 bg-white rounded-2xl p-6 shadow-2xl border-2 border-sky-100">
+              {/* Price Card */}
+              <div className="text-center p-6 bg-gradient-to-br from-sky-500 via-sky-600 to-red-600 rounded-xl mb-6 relative overflow-hidden shadow-xl">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
+                <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full -ml-12 -mb-12"></div>
+                <div className="relative z-10">
+                  <span
+                    className="text-4xl md:text-5xl font-black text-white block mb-1"
+                    style={{ fontFamily: "'Poppins', sans-serif" }}
+                  >
+                    ₹{property.price?.toLocaleString("en-IN")}
+                  </span>
+                  <span
+                    className="text-white/90 text-sm font-semibold"
+                    style={{ fontFamily: "'Inter', sans-serif" }}
+                  >
+                    Total Price
+                  </span>
+                </div>
               </div>
 
-              <h2 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '1rem' }}>
+              <h2
+                className="text-xl font-bold mb-4 text-gray-900"
+                style={{ fontFamily: "'Poppins', sans-serif" }}
+              >
                 Send Enquiry
               </h2>
 
               {submitted ? (
-                <div style={{
-                  padding: '1rem',
-                  background: '#d1fae5',
-                  border: '2px solid #10b981',
-                  borderRadius: '0.75rem',
-                  color: '#065f46',
-                  fontWeight: 600
-                }}>
-                  <p style={{ fontWeight: 'bold', marginBottom: '0.25rem' }}>Thank you!</p>
-                  <p style={{ fontSize: '0.875rem' }}>Your enquiry has been submitted successfully.</p>
+                <div
+                  className="p-4 bg-gradient-to-r from-green-50 to-green-100 border-2 border-green-500 rounded-xl text-green-800"
+                  style={{ fontFamily: "'Inter', sans-serif" }}
+                >
+                  <p className="font-bold mb-1 flex items-center gap-2">
+                    <Sparkles size={16} />
+                    Thank you!
+                  </p>
+                  <p className="text-sm">
+                    Your enquiry has been submitted successfully.
+                  </p>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '1rem'
-                }}>
+                <form onSubmit={handleSubmit} className="space-y-4">
                   {[
-                    { label: 'Your Name', type: 'text', value: formData.name, field: 'name', placeholder: 'Enter your name' },
-                    { label: 'Email', type: 'email', value: formData.email, field: 'email', placeholder: 'your@email.com' },
-                    { label: 'Phone', type: 'tel', value: formData.phone, field: 'phone', placeholder: '+91 98765 43210' }
+                    {
+                      label: "Your Name",
+                      type: "text",
+                      value: formData.name,
+                      field: "name",
+                      placeholder: "Enter your name",
+                    },
+                    {
+                      label: "Email",
+                      type: "email",
+                      value: formData.email,
+                      field: "email",
+                      placeholder: "your@email.com",
+                    },
+                    {
+                      label: "Phone",
+                      type: "tel",
+                      value: formData.phone,
+                      field: "phone",
+                      placeholder: "+91 98765 43210",
+                    },
                   ].map((input, idx) => (
                     <div key={idx}>
-                      <label style={{
-                        fontWeight: 600,
-                        color: '#374151',
-                        fontSize: '0.95rem',
-                        display: 'block',
-                        marginBottom: '0.5rem'
-                      }}>{input.label}</label>
+                      <label
+                        className="block font-semibold text-gray-700 text-sm mb-2"
+                        style={{ fontFamily: "'Inter', sans-serif" }}
+                      >
+                        {input.label}
+                      </label>
                       <input
                         type={input.type}
                         placeholder={input.placeholder}
                         value={input.value}
-                        onChange={(e) => setFormData({ ...formData, [input.field]: e.target.value })}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            [input.field]: e.target.value,
+                          })
+                        }
                         required
-                        style={{
-                          width: '100%',
-                          padding: '0.875rem',
-                          border: '2px solid #e5e7eb',
-                          borderRadius: '0.75rem',
-                          fontSize: '0.95rem',
-                          transition: 'all 0.3s ease'
-                        }}
-                        onFocus={(e) => {
-                          e.target.style.borderColor = '#2563eb';
-                          e.target.style.boxShadow = '0 0 0 3px rgba(37, 99, 235, 0.1)';
-                        }}
-                        onBlur={(e) => {
-                          e.target.style.borderColor = '#e5e7eb';
-                          e.target.style.boxShadow = 'none';
-                        }}
+                        className="w-full px-4 py-3 border-2 border-sky-200 rounded-xl text-sm focus:border-sky-500 focus:outline-none focus:ring-4 focus:ring-sky-100 transition-all bg-sky-50/50 focus:bg-white"
+                        style={{ fontFamily: "'Inter', sans-serif" }}
                       />
                     </div>
                   ))}
 
                   <div>
-                    <label style={{
-                      fontWeight: 600,
-                      color: '#374151',
-                      fontSize: '0.95rem',
-                      display: 'block',
-                      marginBottom: '0.5rem'
-                    }}>Message</label>
+                    <label
+                      className="block font-semibold text-gray-700 text-sm mb-2"
+                      style={{ fontFamily: "'Inter', sans-serif" }}
+                    >
+                      Message
+                    </label>
                     <textarea
                       placeholder="I'm interested in this property..."
                       value={formData.message}
-                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                      style={{
-                        width: '100%',
-                        minHeight: '120px',
-                        padding: '0.875rem',
-                        border: '2px solid #e5e7eb',
-                        borderRadius: '0.75rem',
-                        fontSize: '0.95rem',
-                        resize: 'vertical',
-                        transition: 'all 0.3s ease',
-                        fontFamily: 'inherit'
-                      }}
-                      onFocus={(e) => {
-                        e.target.style.borderColor = '#2563eb';
-                        e.target.style.boxShadow = '0 0 0 3px rgba(37, 99, 235, 0.1)';
-                      }}
-                      onBlur={(e) => {
-                        e.target.style.borderColor = '#e5e7eb';
-                        e.target.style.boxShadow = 'none';
-                      }}
+                      onChange={(e) =>
+                        setFormData({ ...formData, message: e.target.value })
+                      }
+                      className="w-full min-h-[100px] px-4 py-3 border-2 border-sky-200 rounded-xl text-sm resize-vertical focus:border-sky-500 focus:outline-none focus:ring-4 focus:ring-sky-100 transition-all bg-sky-50/50 focus:bg-white"
+                      style={{ fontFamily: "'Inter', sans-serif" }}
                     ></textarea>
                   </div>
 
-                  <button 
-                    type="submit" 
+                  <button
+                    type="submit"
                     disabled={loading}
-                    style={{
-                      padding: '1rem',
-                      background: '#2563eb',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '0.75rem',
-                      fontWeight: 700,
-                      fontSize: '1rem',
-                      cursor: loading ? 'not-allowed' : 'pointer',
-                      transition: 'all 0.3s ease',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '0.5rem',
-                      opacity: loading ? 0.7 : 1
-                    }}
-                    onMouseOver={(e) => {
-                      if (!loading) {
-                        e.target.style.background = '#1d4ed8';
-                        e.target.style.transform = 'translateY(-2px)';
-                        e.target.style.boxShadow = '0 6px 20px rgba(37, 99, 235, 0.4)';
-                      }
-                    }}
-                    onMouseOut={(e) => {
-                      e.target.style.background = '#2563eb';
-                      e.target.style.transform = 'translateY(0)';
-                      e.target.style.boxShadow = 'none';
-                    }}
+                    className="w-full px-6 py-3 bg-gradient-to-r from-sky-500 to-sky-600 text-white border-none rounded-xl font-bold text-base cursor-pointer transition-all flex items-center justify-center gap-2 hover:from-sky-600 hover:to-sky-700 hover:shadow-xl hover:scale-[1.02] disabled:opacity-70 disabled:cursor-not-allowed shadow-lg"
+                    style={{ fontFamily: "'Inter', sans-serif" }}
                   >
                     <Send size={20} />
-                    {loading ? 'Sending...' : 'Submit Enquiry'}
+                    {loading ? "Sending..." : "Submit Enquiry"}
                   </button>
                 </form>
               )}
 
-              <div style={{
-                marginTop: '1.5rem',
-                paddingTop: '1.5rem',
-                borderTop: '1px solid #e5e7eb'
-              }}>
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.75rem',
-                  padding: '0.75rem',
-                  color: '#4b5563',
-                  fontSize: '0.95rem',
-                  transition: 'all 0.2s ease',
-                  borderRadius: '0.5rem',
-                  cursor: 'pointer'
-                }}
-                onMouseOver={(e) => {
-                  e.currentTarget.style.background = '#f9fafb';
-                  e.currentTarget.style.color = '#2563eb';
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.background = 'transparent';
-                  e.currentTarget.style.color = '#4b5563';
-                }}>
-                  <Phone size={18} />
-                  <span>+91 98765 43210</span>
+              <div className="mt-6 pt-6 border-t-2 border-sky-100 space-y-3">
+                <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-sky-50 transition-colors cursor-pointer group">
+                  <div className="w-10 h-10 bg-gradient-to-br from-sky-100 to-sky-200 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Phone size={18} className="text-sky-600" />
+                  </div>
+                  <span
+                    className="text-gray-700 text-sm font-semibold"
+                    style={{ fontFamily: "'Inter', sans-serif" }}
+                  >
+                    +91 98765 43210
+                  </span>
                 </div>
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.75rem',
-                  padding: '0.75rem',
-                  color: '#4b5563',
-                  fontSize: '0.95rem',
-                  transition: 'all 0.2s ease',
-                  borderRadius: '0.5rem',
-                  cursor: 'pointer'
-                }}
-                onMouseOver={(e) => {
-                  e.currentTarget.style.background = '#f9fafb';
-                  e.currentTarget.style.color = '#2563eb';
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.background = 'transparent';
-                  e.currentTarget.style.color = '#4b5563';
-                }}>
-                  <Mail size={18} />
-                  <span>info@hitechhomes.com</span>
+                <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-sky-50 transition-colors cursor-pointer group">
+                  <div className="w-10 h-10 bg-gradient-to-br from-red-100 to-red-200 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Mail size={18} className="text-red-600" />
+                  </div>
+                  <span
+                    className="text-gray-700 text-sm font-semibold"
+                    style={{ fontFamily: "'Inter', sans-serif" }}
+                  >
+                    info@hitechhomes.com
+                  </span>
                 </div>
               </div>
             </div>

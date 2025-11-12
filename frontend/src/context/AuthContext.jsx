@@ -1,5 +1,5 @@
-import { createContext, useState, useEffect } from 'react';
-import api from '../utils/api';
+import { createContext, useState, useEffect } from "react";
+import api from "../utils/api";
 
 export const AuthContext = createContext();
 
@@ -8,17 +8,18 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (token) {
-      api.get('/admin/profile')
-        .then(response => {
+      api
+        .get("/admin/profile")
+        .then((response) => {
           if (response.data.success) {
-            setUser(response.data.admin);
+            setUser(response.data.data);
           }
           setLoading(false);
         })
         .catch(() => {
-          localStorage.removeItem('token');
+          localStorage.removeItem("token");
           setLoading(false);
         });
     } else {
@@ -28,19 +29,38 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const response = await api.post('/admin/login', { email, password });
+      const response = await api.post("/admin/login", { email, password });
+
+      console.log("Login API Response:", response.data);
+
       if (response.data.success) {
-        localStorage.setItem('token', response.data.token);
-        setUser(response.data.admin);
+        // Extract token from response.data.data.token (based on adminController structure)
+        const token = response.data.data.token;
+        const adminData = response.data.data;
+
+        localStorage.setItem("token", token);
+        localStorage.setItem("user", JSON.stringify(adminData));
+        setUser(adminData);
+
+        return { success: true };
       }
-      return response.data;
+      return {
+        success: false,
+        message: response.data.message || "Login failed",
+      };
     } catch (error) {
-      return { success: false, message: error.response?.data?.message || 'Login failed' };
+      console.error("Login error:", error);
+      return {
+        success: false,
+        message:
+          error.response?.data?.message || "Login failed. Please try again.",
+      };
     }
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
     setUser(null);
   };
 

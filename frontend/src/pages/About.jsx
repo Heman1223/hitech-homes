@@ -1,279 +1,230 @@
-import { Target, Eye, Award, Users, TrendingUp, Shield } from 'lucide-react';
+import { Target, Eye, Award, Heart, Home, Sparkles } from "lucide-react";
 
-const About = () => {
+const About = ({ setCurrentPage }) => {
   return (
-    <div>
-      {/* Hero Section */}
-      <section style={{
-        position: 'relative',
-        padding: '6rem 0 4rem',
-        background: 'linear-gradient(135deg, #2563eb 0%, #1e40af 100%)',
-        color: 'white',
-        overflow: 'hidden'
-      }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div style={{
-            position: 'relative',
-            zIndex: 10,
-            textAlign: 'center',
-            maxWidth: '800px',
-            margin: '0 auto'
-          }}>
-            <h1 style={{
-              fontSize: 'clamp(2.5rem, 5vw, 4rem)',
-              fontWeight: 900,
-              marginBottom: '1.5rem',
-              lineHeight: 1.1
-            }}>About Hi-Tech Homes</h1>
-            <p style={{
-              fontSize: '1.25rem',
-              opacity: 0.95,
-              lineHeight: 1.7
-            }}>
-              Turning Transactions into Relationships - Building trust and creating lasting partnerships in real estate
-            </p>
+    <div style={{ fontFamily: "'Inter', 'Segoe UI', sans-serif" }}>
+      {/* Hero Section with Gradient (No Background Image) */}
+      <section className="relative py-24 overflow-hidden bg-gradient-to-br from-sky-500 via-sky-600 to-red-600">
+        {/* Animated Background Shapes */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute top-0 left-0 w-96 h-96 bg-white/10 rounded-full blur-3xl animate-pulse"></div>
+          <div
+            className="absolute bottom-0 right-0 w-96 h-96 bg-red-400/20 rounded-full blur-3xl animate-pulse"
+            style={{ animationDelay: "1s" }}
+          ></div>
+          <div
+            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-sky-300/20 rounded-full blur-2xl animate-pulse"
+            style={{ animationDelay: "0.5s" }}
+          ></div>
+        </div>
+
+        {/* Animated Particles */}
+        <div className="absolute inset-0 overflow-hidden">
+          {[...Array(12)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute w-2 h-2 bg-white/30 rounded-full animate-pulse"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 3}s`,
+                animationDuration: `${2 + Math.random() * 3}s`,
+              }}
+            ></div>
+          ))}
+        </div>
+
+        {/* Geometric Pattern Overlay */}
+        <div className="absolute inset-0 opacity-10">
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage: `repeating-linear-gradient(45deg, transparent, transparent 35px, rgba(255,255,255,.1) 35px, rgba(255,255,255,.1) 70px)`,
+            }}
+          ></div>
+        </div>
+
+        <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
+          <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-md px-4 py-2 rounded-full mb-4">
+            <Sparkles size={18} className="text-yellow-300" />
+            <span className="text-sm font-semibold">Our Story</span>
           </div>
+
+          <h1
+            className="text-5xl md:text-6xl font-extrabold mb-6 drop-shadow-2xl"
+            style={{ fontFamily: "'Poppins', sans-serif" }}
+          >
+            About <span className="text-red-200">Hi-Tech Homes</span>
+          </h1>
+          <p className="text-lg md:text-xl text-white/95 leading-relaxed drop-shadow-lg max-w-3xl mx-auto">
+            Turning Transactions into Relationships — Building trust and
+            creating lasting partnerships in real estate.
+          </p>
         </div>
       </section>
 
-      {/* Mission & Vision */}
-      <section style={{ padding: '5rem 0', background: 'white' }}>
+      {/* Mission & Vision Section */}
+      <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(2, 1fr)',
-            gap: '3rem'
-          }}>
-            <div style={{
-              position: 'relative',
-              padding: '3rem',
-              borderRadius: '1.5rem',
-              overflow: 'hidden',
-              background: 'linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)',
-              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
-              transition: 'all 0.4s ease'
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.transform = 'translateY(-10px)';
-              e.currentTarget.style.boxShadow = '0 12px 30px rgba(0, 0, 0, 0.12)';
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.08)';
-            }}>
-              <div style={{
-                width: '4rem',
-                height: '4rem',
-                borderRadius: '1rem',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '2rem',
-                marginBottom: '1.5rem',
-                background: '#2563eb',
-                color: 'white'
-              }}>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-20">
+            {/* Mission */}
+            <div>
+              <div className="w-16 h-16 bg-gradient-to-br from-sky-500 to-sky-600 rounded-2xl flex items-center justify-center text-white mb-6 shadow-lg">
                 <Target size={32} />
               </div>
-              <h2 style={{
-                fontSize: '2rem',
-                fontWeight: 800,
-                marginBottom: '1rem',
-                color: '#111827'
-              }}>Our Mission</h2>
-              <p style={{
-                fontSize: '1.125rem',
-                lineHeight: 1.8,
-                color: '#4b5563'
-              }}>
-                To revolutionize the real estate industry by providing exceptional service, 
-                cutting-edge technology, and personalized attention to every client. We believe 
-                that buying or selling a property is not just a transaction—it's a life-changing 
-                decision that deserves expert guidance and care.
+              <h2
+                className="text-4xl font-extrabold mb-4 bg-gradient-to-r from-sky-600 to-sky-700 bg-clip-text text-transparent"
+                style={{ fontFamily: "'Poppins', sans-serif" }}
+              >
+                Our Mission
+              </h2>
+              <p className="text-base text-gray-700 leading-relaxed mb-6">
+                To revolutionize the real estate industry by providing
+                exceptional service, cutting-edge technology, and personalized
+                attention to every client. We believe that buying or selling a
+                property is not just a transaction—it's a life-changing decision
+                that deserves expert guidance and care.
               </p>
             </div>
+            <div className="relative">
+              <img
+                src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800"
+                alt="Mission"
+                className="rounded-3xl shadow-2xl w-full h-[400px] object-cover"
+              />
+              <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-sky-200 rounded-full opacity-30 blur-2xl"></div>
+            </div>
+          </div>
 
-            <div style={{
-              position: 'relative',
-              padding: '3rem',
-              borderRadius: '1.5rem',
-              overflow: 'hidden',
-              background: 'linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%)',
-              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
-              transition: 'all 0.4s ease'
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.transform = 'translateY(-10px)';
-              e.currentTarget.style.boxShadow = '0 12px 30px rgba(0, 0, 0, 0.12)';
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.08)';
-            }}>
-              <div style={{
-                width: '4rem',
-                height: '4rem',
-                borderRadius: '1rem',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '2rem',
-                marginBottom: '1.5rem',
-                background: '#dc2626',
-                color: 'white'
-              }}>
+          {/* Vision */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div className="relative order-2 lg:order-1">
+              <img
+                src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800"
+                alt="Vision"
+                className="rounded-3xl shadow-2xl w-full h-[400px] object-cover"
+              />
+              <div className="absolute -top-6 -right-6 w-32 h-32 bg-red-200 rounded-full opacity-30 blur-2xl"></div>
+            </div>
+            <div className="order-1 lg:order-2">
+              <div className="w-16 h-16 bg-gradient-to-br from-red-500 to-red-600 rounded-2xl flex items-center justify-center text-white mb-6 shadow-lg">
                 <Eye size={32} />
               </div>
-              <h2 style={{
-                fontSize: '2rem',
-                fontWeight: 800,
-                marginBottom: '1rem',
-                color: '#111827'
-              }}>Our Vision</h2>
-              <p style={{
-                fontSize: '1.125rem',
-                lineHeight: 1.8,
-                color: '#4b5563'
-              }}>
-                To be the most trusted and innovative real estate company, known for turning 
-                transactions into lasting relationships. We envision a future where finding 
-                your dream home is seamless, transparent, and exciting, powered by technology 
-                and driven by genuine care for our clients.
+              <h2
+                className="text-4xl font-extrabold mb-4 bg-gradient-to-r from-red-600 to-red-700 bg-clip-text text-transparent"
+                style={{ fontFamily: "'Poppins', sans-serif" }}
+              >
+                Our Vision
+              </h2>
+              <p className="text-base text-gray-700 leading-relaxed mb-6">
+                To be the most trusted and innovative real estate company, known
+                for turning transactions into lasting relationships. We envision
+                a future where finding your dream home is seamless, transparent,
+                and exciting, powered by technology and driven by genuine care
+                for our clients.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Stats Showcase */}
-      <section style={{
-        padding: '5rem 0',
-        background: 'linear-gradient(135deg, #f9fafb 0%, #ffffff 100%)'
-      }}>
+      {/* Values Section */}
+      <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-            gap: '2rem'
-          }}>
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-red-100 to-sky-100 px-4 py-2 rounded-full mb-3">
+              <Heart size={16} className="text-red-600" />
+              <span className="text-sm font-bold text-red-700">
+                Core Values
+              </span>
+            </div>
+            <h2
+              className="text-4xl font-extrabold mb-3 bg-gradient-to-r from-red-600 to-sky-600 bg-clip-text text-transparent"
+              style={{ fontFamily: "'Poppins', sans-serif" }}
+            >
+              Our Core Values
+            </h2>
+            <p className="text-base text-gray-600">What drives us every day</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
             {[
-              { icon: <TrendingUp size={32} />, number: '10+', label: 'Years of Excellence' },
-              { icon: <Award size={32} />, number: '500+', label: 'Properties Sold' },
-              { icon: <Users size={32} />, number: '1000+', label: 'Happy Clients' },
-              { icon: <Shield size={32} />, number: '50+', label: 'Expert Agents' }
-            ].map((stat, idx) => (
-              <div key={idx} style={{
-                textAlign: 'center',
-                padding: '2.5rem 2rem',
-                background: 'white',
-                borderRadius: '1rem',
-                boxShadow: '0 2px 10px rgba(0, 0, 0, 0.06)',
-                transition: 'all 0.4s ease'
-              }}
-              onMouseOver={(e) => {
-                e.currentTarget.style.transform = 'translateY(-10px)';
-                e.currentTarget.style.boxShadow = '0 12px 25px rgba(0, 0, 0, 0.1)';
-              }}
-              onMouseOut={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.06)';
-              }}>
-                <div style={{
-                  width: '4rem',
-                  height: '4rem',
-                  margin: '0 auto 1.5rem',
-                  background: 'linear-gradient(135deg, #2563eb 0%, #dc2626 100%)',
-                  borderRadius: '1rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: 'white',
-                  fontSize: '2rem'
-                }}>
-                  {stat.icon}
+              {
+                title: "Trust",
+                desc: "Building lasting relationships through transparency and honesty",
+                img: "https://images.unsplash.com/photo-1521791136064-7986c2920216?w=400",
+                icon: <Heart size={24} />,
+                gradient: "from-sky-500 to-sky-600",
+              },
+              {
+                title: "Excellence",
+                desc: "Delivering outstanding service and exceeding expectations",
+                img: "https://images.unsplash.com/photo-1553877522-43269d4ea984?w=400",
+                icon: <Award size={24} />,
+                gradient: "from-red-500 to-red-600",
+              },
+              {
+                title: "Innovation",
+                desc: "Embracing technology to simplify the real estate experience",
+                img: "https://images.unsplash.com/photo-1552664730-d307ca884978?w=400",
+                icon: <Home size={24} />,
+                gradient: "from-sky-600 to-red-500",
+              },
+            ].map((value, idx) => (
+              <div key={idx} className="text-center">
+                <div className="relative inline-block mb-6 group">
+                  <img
+                    src={value.img}
+                    alt={value.title}
+                    className="rounded-full w-48 h-48 object-cover mx-auto shadow-xl group-hover:scale-110 transition-transform duration-300 border-4 border-sky-100"
+                  />
+                  <div
+                    className={`absolute -bottom-4 -right-4 w-16 h-16 rounded-full flex items-center justify-center text-white shadow-lg bg-gradient-to-br ${value.gradient}`}
+                  >
+                    {value.icon}
+                  </div>
                 </div>
-                <span style={{
-                  fontSize: '3rem',
-                  fontWeight: 900,
-                  background: 'linear-gradient(135deg, #2563eb 0%, #dc2626 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  marginBottom: '0.5rem',
-                  display: 'block'
-                }}>{stat.number}</span>
-                <span style={{
-                  fontSize: '1.125rem',
-                  color: '#6b7280',
-                  fontWeight: 600
-                }}>{stat.label}</span>
+                <h3
+                  className="text-2xl font-bold text-gray-900 mb-3"
+                  style={{ fontFamily: "'Poppins', sans-serif" }}
+                >
+                  {value.title}
+                </h3>
+                <p className="text-base text-gray-700 leading-relaxed">
+                  {value.desc}
+                </p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Timeline */}
-      <section style={{ padding: '5rem 0', background: 'white' }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
-            <h2 style={{
-              fontSize: 'clamp(2rem, 4vw, 3rem)',
-              fontWeight: 800,
-              color: '#111827',
-              marginBottom: '1rem'
-            }}>Our Journey</h2>
-            <p style={{ fontSize: '1.125rem', color: '#6b7280' }}>
-              Milestones that shaped Hi-Tech Homes
-            </p>
+      {/* CTA Section */}
+      <section className="py-20 bg-gradient-to-br from-sky-500 via-sky-600 to-red-600 text-white relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
+
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+          <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-md px-4 py-2 rounded-full mb-4">
+            <Sparkles size={16} className="text-yellow-300" />
+            <span className="text-sm font-bold">Get Started</span>
           </div>
 
-          <div style={{ maxWidth: '900px', margin: '0 auto' }}>
-            {[
-              { year: '2015', title: 'Foundation', desc: 'Hi-Tech Homes was founded with a vision to revolutionize real estate through technology and personalized service.', color: '#2563eb' },
-              { year: '2018', title: 'Expansion', desc: 'Expanded operations across multiple cities, serving over 500 satisfied clients and growing our expert team.', color: '#dc2626' },
-              { year: '2021', title: 'Digital Innovation', desc: 'Launched our cutting-edge digital platform, making property search and transactions seamless and transparent.', color: '#2563eb' },
-              { year: '2025', title: 'Industry Leader', desc: 'Recognized as one of the top real estate companies, with over 1000 happy clients and counting.', color: '#dc2626' }
-            ].map((item, idx) => (
-              <div key={idx} style={{
-                position: 'relative',
-                marginBottom: '3rem',
-                paddingLeft: idx % 2 === 0 ? '0' : '50%',
-                paddingRight: idx % 2 === 0 ? '50%' : '0',
-                textAlign: idx % 2 === 0 ? 'right' : 'left'
-              }}>
-                <div style={{
-                  background: 'white',
-                  padding: '2rem',
-                  borderRadius: '1rem',
-                  boxShadow: '0 4px 15px rgba(0, 0, 0, 0.08)',
-                  transition: 'all 0.3s ease'
-                }}
-                onMouseOver={(e) => {
-                  e.currentTarget.style.transform = 'scale(1.05)';
-                  e.currentTarget.style.boxShadow = '0 8px 25px rgba(0, 0, 0, 0.12)';
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.transform = 'scale(1)';
-                  e.currentTarget.style.boxShadow = '0 4px 15px rgba(0, 0, 0, 0.08)';
-                }}>
-                  <span style={{
-                    fontSize: '1.5rem',
-                    fontWeight: 800,
-                    color: item.color,
-                    marginBottom: '0.5rem',
-                    display: 'block'
-                  }}>{item.year}</span>
-                  <h3 style={{
-                    fontSize: '1.25rem',
-                    fontWeight: 700,
-                    color: '#111827',
-                    marginBottom: '0.75rem'
-                  }}>{item.title}</h3>
-                  <p style={{ color: '#6b7280', lineHeight: 1.7 }}>{item.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
+          <h2
+            className="text-3xl md:text-4xl font-extrabold mb-4"
+            style={{ fontFamily: "'Poppins', sans-serif" }}
+          >
+            Ready to Start Your Journey?
+          </h2>
+          <p className="text-lg mb-8 text-white/95">
+            Let us help you find your dream property today.
+          </p>
+          <button
+            onClick={() => setCurrentPage && setCurrentPage("contact")}
+            className="px-8 py-3 bg-white text-sky-600 font-bold rounded-full shadow-2xl hover:shadow-white/50 hover:scale-105 transition-all"
+          >
+            Contact Us Today
+          </button>
         </div>
       </section>
     </div>

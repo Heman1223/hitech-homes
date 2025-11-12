@@ -1,243 +1,393 @@
-import { MapPin, Bed, Bath, Square, Play } from 'lucide-react';
+import { useState } from "react";
+import {
+  MapPin,
+  Bed,
+  Bath,
+  Square,
+  ChevronRight,
+  Phone,
+  Mail,
+  Wifi,
+  Car,
+  Dumbbell,
+  Shield,
+  Send,
+  Heart,
+  Share2,
+  Camera,
+} from "lucide-react";
 
-const PropertyCard = ({ property, onClick }) => {
-  // Get the first image or fallback
-  const displayImage = property.images?.[0]?.url || 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=500';
-  const hasVideo = property.video?.url;
-  const hasMultipleImages = property.images?.length > 1;
-
-  const cardStyle = {
-    background: 'white',
-    borderRadius: '1rem',
-    overflow: 'hidden',
-    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
-    transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-    cursor: 'pointer',
-    animation: 'scaleUp 0.5s ease-out'
+const PropertyDetails = ({ setCurrentPage }) => {
+  // Demo property data
+  const property = {
+    _id: "1",
+    title: "Luxury Villa with Sea View",
+    address: "Marine Drive, Mumbai",
+    city: "Mumbai",
+    price: 12500000,
+    bhk: 4,
+    bathrooms: 3,
+    area: 2500,
+    description:
+      "Experience luxury living at its finest in this stunning villa featuring breathtaking sea views, premium finishes, and world-class amenities. This architectural masterpiece combines modern elegance with timeless design, offering spacious living areas, high ceilings, and floor-to-ceiling windows that flood the space with natural light.",
+    amenities: [
+      "Swimming Pool",
+      "Gym",
+      "Parking",
+      "24/7 Security",
+      "Power Backup",
+      "Clubhouse",
+      "Garden",
+      "Kids Play Area",
+    ],
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800",
+      },
+      {
+        url: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800",
+      },
+      {
+        url: "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=800",
+      },
+      {
+        url: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800",
+      },
+      {
+        url: "https://images.unsplash.com/photo-1600607687644-c7171b42498b?w=800",
+      },
+    ],
+    video: null,
   };
 
-  const cardHoverStyle = {
-    transform: 'translateY(-12px)',
-    boxShadow: '0 20px 40px rgba(0, 0, 0, 0.15)'
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    message: "",
+  });
+  const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [liked, setLiked] = useState(false);
+
+  const handleSubmit = async () => {
+    setLoading(true);
+    // Simulate API call
+    setTimeout(() => {
+      setSubmitted(true);
+      setFormData({ name: "", email: "", phone: "", message: "" });
+      setLoading(false);
+      setTimeout(() => setSubmitted(false), 5000);
+    }, 1000);
   };
 
-  const imageContainerStyle = {
-    position: 'relative',
-    height: '15rem',
-    background: '#e5e7eb',
-    overflow: 'hidden'
-  };
-
-  const imageStyle = {
-    width: '100%',
-    height: '100%',
-    objectFit: 'cover',
-    transition: 'transform 0.5s ease'
-  };
-
-  const imageHoverStyle = {
-    transform: 'scale(1.1)'
-  };
-
-  const badgeStyle = {
-    position: 'absolute',
-    top: '1rem',
-    right: '1rem',
-    background: 'linear-gradient(135deg, #dc2626 0%, #991b1b 100%)',
-    color: 'white',
-    padding: '0.5rem 1rem',
-    borderRadius: '0.5rem',
-    fontWeight: 600,
-    fontSize: '0.95rem',
-    backdropFilter: 'blur(10px)',
-    zIndex: 10,
-    boxShadow: '0 4px 12px rgba(220, 38, 38, 0.3)'
-  };
-
-  const mediaIndicatorStyle = {
-    position: 'absolute',
-    bottom: '1rem',
-    left: '1rem',
-    display: 'flex',
-    gap: '0.5rem',
-    zIndex: 10
-  };
-
-  const indicatorBadgeStyle = {
-    background: 'rgba(0, 0, 0, 0.7)',
-    backdropFilter: 'blur(10px)',
-    color: 'white',
-    padding: '0.5rem 0.75rem',
-    borderRadius: '0.5rem',
-    fontSize: '0.875rem',
-    fontWeight: 600,
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.5rem'
-  };
-
-  const contentStyle = {
-    padding: '1.5rem'
-  };
-
-  const titleStyle = {
-    fontWeight: 700,
-    fontSize: '1.25rem',
-    color: '#111827',
-    marginBottom: '0.5rem',
-    display: '-webkit-box',
-    WebkitLineClamp: 2,
-    WebkitBoxOrient: 'vertical',
-    overflow: 'hidden',
-    lineHeight: '1.4'
-  };
-
-  const locationStyle = {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.5rem',
-    color: '#6b7280',
-    fontSize: '0.95rem',
-    marginBottom: '1rem'
-  };
-
-  const featuresStyle = {
-    display: 'flex',
-    justifyContent: 'space-between',
-    fontSize: '0.95rem',
-    color: '#4b5563',
-    marginBottom: '1.25rem',
-    paddingTop: '1rem',
-    borderTop: '1px solid #e5e7eb'
-  };
-
-  const featureItemStyle = {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.5rem'
-  };
-
-  const buttonStyle = {
-    width: '100%',
-    padding: '0.875rem',
-    background: 'linear-gradient(135deg, #2563eb 0%, #1e40af 100%)',
-    color: 'white',
-    border: 'none',
-    borderRadius: '0.75rem',
-    fontWeight: 600,
-    fontSize: '0.95rem',
-    cursor: 'pointer',
-    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-    boxShadow: '0 4px 12px rgba(37, 99, 235, 0.3)'
-  };
-
-  const buttonHoverStyle = {
-    transform: 'translateY(-3px)',
-    boxShadow: '0 8px 20px rgba(37, 99, 235, 0.4)'
-  };
+  const amenityIcons = [
+    Wifi,
+    Dumbbell,
+    Car,
+    Shield,
+    Wifi,
+    Dumbbell,
+    Car,
+    Shield,
+  ];
 
   return (
-    <>
-      <style>{`
-        @keyframes scaleUp {
-          from {
-            opacity: 0;
-            transform: scale(0.9);
-          }
-          to {
-            opacity: 1;
-            transform: scale(1);
-          }
-        }
-      `}</style>
-      
-      <div 
-        style={cardStyle}
-        onClick={onClick}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.transform = cardHoverStyle.transform;
-          e.currentTarget.style.boxShadow = cardHoverStyle.boxShadow;
-          const img = e.currentTarget.querySelector('img');
-          if (img) img.style.transform = imageHoverStyle.transform;
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.transform = 'translateY(0)';
-          e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.08)';
-          const img = e.currentTarget.querySelector('img');
-          if (img) img.style.transform = 'scale(1)';
-        }}
-      >
-        <div style={imageContainerStyle}>
-          <img 
-            src={displayImage} 
-            alt={property.title} 
-            style={imageStyle}
-          />
-          <div style={badgeStyle}>
-            ₹{property.price?.toLocaleString('en-IN')}
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
+      {/* Breadcrumb */}
+      <div className="bg-white border-b border-gray-200 sticky top-0 z-40 shadow-sm">
+        <div className="max-w-7xl mx-auto px-6 py-4">
+          <div className="flex items-center gap-2 text-sm">
+            <span
+              onClick={() => setCurrentPage && setCurrentPage("home")}
+              className="text-gray-600 hover:text-sky-600 cursor-pointer transition-colors"
+            >
+              Home
+            </span>
+            <ChevronRight size={16} className="text-gray-400" />
+            <span
+              onClick={() => setCurrentPage && setCurrentPage("listings")}
+              className="text-gray-600 hover:text-sky-600 cursor-pointer transition-colors"
+            >
+              Properties
+            </span>
+            <ChevronRight size={16} className="text-gray-400" />
+            <span className="text-gray-900 font-semibold">
+              {property.title}
+            </span>
           </div>
-
-          {/* Media Indicators */}
-          <div style={mediaIndicatorStyle}>
-            {hasMultipleImages && (
-              <div style={indicatorBadgeStyle}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                  <circle cx="8.5" cy="8.5" r="1.5"/>
-                  <polyline points="21 15 16 10 5 21"/>
-                </svg>
-                {property.images.length}
-              </div>
-            )}
-            {hasVideo && (
-              <div style={indicatorBadgeStyle}>
-                <Play size={16} fill="currentColor" />
-                Video
-              </div>
-            )}
-          </div>
-        </div>
-        
-        <div style={contentStyle}>
-          <h3 style={titleStyle}>{property.title}</h3>
-          
-          <div style={locationStyle}>
-            <MapPin style={{ width: '1rem', height: '1rem', color: '#dc2626' }} />
-            <span>{property.city}</span>
-          </div>
-          
-          <div style={featuresStyle}>
-            <div style={featureItemStyle}>
-              <Bed style={{ width: '1rem', height: '1rem', color: '#2563eb' }} />
-              <span>{property.bhk} BHK</span>
-            </div>
-            <div style={featureItemStyle}>
-              <Bath style={{ width: '1rem', height: '1rem', color: '#2563eb' }} />
-              <span>{property.bathrooms || 2} Bath</span>
-            </div>
-            <div style={featureItemStyle}>
-              <Square style={{ width: '1rem', height: '1rem', color: '#2563eb' }} />
-              <span>{property.area || 1200} sqft</span>
-            </div>
-          </div>
-          
-          <button 
-            style={buttonStyle}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = buttonHoverStyle.transform;
-              e.currentTarget.style.boxShadow = buttonHoverStyle.boxShadow;
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = '0 4px 12px rgba(37, 99, 235, 0.3)';
-            }}
-          >
-            View Details
-          </button>
         </div>
       </div>
-    </>
+
+      {/* Hero Gallery */}
+      <div className="relative bg-black">
+        <div className="max-w-7xl mx-auto px-6 py-8">
+          <div className="grid grid-cols-4 gap-3 h-[500px]">
+            {/* Main Image */}
+            <div className="col-span-2 row-span-2 relative rounded-2xl overflow-hidden group cursor-pointer">
+              <img
+                src={property.images[0].url}
+                alt={property.title}
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div className="absolute bottom-4 left-4 flex items-center gap-2 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full">
+                <Camera size={18} className="text-sky-600" />
+                <span className="font-semibold text-gray-900">
+                  {property.images.length} Photos
+                </span>
+              </div>
+            </div>
+
+            {/* Additional Images */}
+            {property.images.slice(1, 5).map((image, i) => (
+              <div
+                key={i}
+                className="relative rounded-2xl overflow-hidden group cursor-pointer"
+              >
+                <img
+                  src={image.url}
+                  alt={`Gallery ${i + 1}`}
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors duration-300"></div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-6 py-8">
+        <div className="grid grid-cols-3 gap-8">
+          {/* Left Content */}
+          <div className="col-span-2 space-y-6">
+            {/* Header */}
+            <div className="bg-white rounded-3xl p-8 shadow-lg border border-gray-100">
+              <div className="flex items-start justify-between mb-4">
+                <div className="flex-1">
+                  <div className="flex items-center gap-3 mb-4">
+                    <span className="px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-full font-bold text-sm shadow-lg">
+                      For Sale
+                    </span>
+                    <button
+                      onClick={() => setLiked(!liked)}
+                      className={`p-2 rounded-full transition-all duration-300 ${
+                        liked
+                          ? "bg-red-100 text-red-600"
+                          : "bg-gray-100 text-gray-600 hover:bg-red-50 hover:text-red-600"
+                      }`}
+                    >
+                      <Heart size={20} fill={liked ? "currentColor" : "none"} />
+                    </button>
+                    <button className="p-2 rounded-full bg-gray-100 text-gray-600 hover:bg-sky-50 hover:text-sky-600 transition-all duration-300">
+                      <Share2 size={20} />
+                    </button>
+                  </div>
+                  <h1 className="text-4xl font-extrabold text-gray-900 mb-3 leading-tight">
+                    {property.title}
+                  </h1>
+                  <div className="flex items-center gap-2 text-gray-600">
+                    <MapPin size={20} className="text-sky-600" />
+                    <span className="text-lg">{property.address}</span>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-4xl font-black bg-gradient-to-r from-sky-600 to-red-500 bg-clip-text text-transparent">
+                    ₹{(property.price / 10000000).toFixed(2)}Cr
+                  </div>
+                  <div className="text-sm text-gray-500 mt-1">Total Price</div>
+                </div>
+              </div>
+
+              {/* Stats */}
+              <div className="grid grid-cols-3 gap-4 pt-6 border-t border-gray-200">
+                {[
+                  {
+                    icon: <Bed size={28} />,
+                    value: property.bhk,
+                    label: "Bedrooms",
+                    color: "from-blue-500 to-blue-600",
+                  },
+                  {
+                    icon: <Bath size={28} />,
+                    value: property.bathrooms,
+                    label: "Bathrooms",
+                    color: "from-purple-500 to-purple-600",
+                  },
+                  {
+                    icon: <Square size={28} />,
+                    value: property.area,
+                    label: "Sq. Ft.",
+                    color: "from-orange-500 to-orange-600",
+                  },
+                ].map((stat, idx) => (
+                  <div
+                    key={idx}
+                    className="flex items-center gap-4 p-4 bg-gradient-to-br from-gray-50 to-white rounded-2xl border border-gray-100 hover:shadow-md transition-shadow duration-300"
+                  >
+                    <div
+                      className={`w-14 h-14 bg-gradient-to-br ${stat.color} text-white rounded-xl flex items-center justify-center shadow-lg`}
+                    >
+                      {stat.icon}
+                    </div>
+                    <div>
+                      <div className="text-2xl font-black text-gray-900">
+                        {stat.value}
+                      </div>
+                      <div className="text-sm text-gray-600 font-medium">
+                        {stat.label}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Description */}
+            <div className="bg-white rounded-3xl p-8 shadow-lg border border-gray-100">
+              <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                <div className="w-1 h-8 bg-gradient-to-b from-sky-600 to-red-500 rounded-full"></div>
+                Property Description
+              </h2>
+              <p className="text-gray-700 leading-relaxed text-lg">
+                {property.description}
+              </p>
+            </div>
+
+            {/* Amenities */}
+            <div className="bg-white rounded-3xl p-8 shadow-lg border border-gray-100">
+              <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                <div className="w-1 h-8 bg-gradient-to-b from-sky-600 to-red-500 rounded-full"></div>
+                Features & Amenities
+              </h2>
+              <div className="grid grid-cols-2 gap-4">
+                {property.amenities.map((amenity, idx) => {
+                  const Icon = amenityIcons[idx % amenityIcons.length];
+                  return (
+                    <div
+                      key={idx}
+                      className="flex items-center gap-3 p-4 bg-gradient-to-br from-gray-50 to-white rounded-xl border border-gray-100 hover:shadow-md hover:scale-105 transition-all duration-300 cursor-pointer group"
+                    >
+                      <div className="w-12 h-12 bg-gradient-to-br from-sky-600 to-sky-700 text-white rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                        <Icon size={22} />
+                      </div>
+                      <span className="font-semibold text-gray-800">
+                        {amenity}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
+          {/* Right Sidebar - Enquiry Form */}
+          <div className="sticky top-24 h-fit">
+            <div className="bg-white rounded-3xl p-6 shadow-2xl border border-gray-100 overflow-hidden">
+              {/* Price Banner */}
+              <div className="relative -m-6 mb-6 p-6 bg-gradient-to-br from-sky-600 via-sky-700 to-red-600 text-white">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
+                <div className="relative">
+                  <div className="text-sm font-semibold opacity-90 mb-1">
+                    Starting From
+                  </div>
+                  <div className="text-4xl font-black mb-1">
+                    ₹{property.price.toLocaleString("en-IN")}
+                  </div>
+                  <div className="text-sm opacity-90">Total Price</div>
+                </div>
+              </div>
+
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                Send Enquiry
+              </h2>
+
+              {submitted ? (
+                <div className="p-4 bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-500 rounded-2xl text-green-800">
+                  <p className="font-bold text-lg mb-1">Thank you!</p>
+                  <p className="text-sm">
+                    Your enquiry has been submitted successfully.
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <input
+                    type="text"
+                    placeholder="Your Name"
+                    value={formData.name}
+                    onChange={(e) =>
+                      setFormData({ ...formData, name: e.target.value })
+                    }
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl bg-gray-50 focus:border-sky-500 focus:ring-4 focus:ring-sky-100 transition-all duration-300 text-gray-900 font-medium"
+                  />
+                  <input
+                    type="email"
+                    placeholder="Email Address"
+                    value={formData.email}
+                    onChange={(e) =>
+                      setFormData({ ...formData, email: e.target.value })
+                    }
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl bg-gray-50 focus:border-sky-500 focus:ring-4 focus:ring-sky-100 transition-all duration-300 text-gray-900 font-medium"
+                  />
+                  <input
+                    type="tel"
+                    placeholder="Phone Number"
+                    value={formData.phone}
+                    onChange={(e) =>
+                      setFormData({ ...formData, phone: e.target.value })
+                    }
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl bg-gray-50 focus:border-sky-500 focus:ring-4 focus:ring-sky-100 transition-all duration-300 text-gray-900 font-medium"
+                  />
+                  <textarea
+                    placeholder="I'm interested in this property..."
+                    value={formData.message}
+                    onChange={(e) =>
+                      setFormData({ ...formData, message: e.target.value })
+                    }
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl bg-gray-50 focus:border-sky-500 focus:ring-4 focus:ring-sky-100 transition-all duration-300 text-gray-900 font-medium resize-none h-28"
+                  ></textarea>
+
+                  <button
+                    onClick={handleSubmit}
+                    disabled={loading}
+                    className={`w-full py-4 rounded-xl text-white font-bold text-lg transition-all duration-300 flex items-center justify-center gap-2 ${
+                      loading
+                        ? "bg-sky-400 cursor-not-allowed opacity-80"
+                        : "bg-gradient-to-r from-sky-600 to-red-500 hover:shadow-2xl hover:scale-105 shadow-lg"
+                    }`}
+                  >
+                    <Send size={20} />
+                    {loading ? "Sending..." : "Submit Enquiry"}
+                  </button>
+                </div>
+              )}
+
+              {/* Contact Info */}
+              <div className="mt-6 pt-6 border-t border-gray-200 space-y-3">
+                <div className="flex items-center gap-3 p-3 rounded-xl hover:bg-sky-50 transition-colors cursor-pointer group">
+                  <div className="w-10 h-10 bg-sky-100 rounded-lg flex items-center justify-center group-hover:bg-sky-200 transition-colors">
+                    <Phone size={18} className="text-sky-600" />
+                  </div>
+                  <span className="text-gray-700 font-semibold">
+                    +91 98765 43210
+                  </span>
+                </div>
+                <div className="flex items-center gap-3 p-3 rounded-xl hover:bg-sky-50 transition-colors cursor-pointer group">
+                  <div className="w-10 h-10 bg-sky-100 rounded-lg flex items-center justify-center group-hover:bg-sky-200 transition-colors">
+                    <Mail size={18} className="text-sky-600" />
+                  </div>
+                  <span className="text-gray-700 font-semibold">
+                    info@hitechhomes.com
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 
-export default PropertyCard;
+export default PropertyDetails;
